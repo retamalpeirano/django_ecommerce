@@ -1,0 +1,27 @@
+
+
+services:
+  db:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: growfood_db  # Nombre de la base de datos
+      MYSQL_USER: growdev          # Usuario de la base de datos
+      MYSQL_PASSWORD: growtest     # Contraseña del usuario
+      MYSQL_ROOT_PASSWORD: sudotest  # Contraseña del usuario root
+    volumes:
+      - growfood_mysql_data:/var/lib/mysql
+    ports:
+      - "3307:3306" # 3306:3306 Sí no tienes MySql instalado localmente
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  growfood_mysql_data:
