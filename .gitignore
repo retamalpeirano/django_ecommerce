@@ -27,6 +27,8 @@ share/python-wheels/
 MANIFEST
 
 # Docker
+Dockerfile
+docker-compose.yml
 docker-compose.override.yml
 *.pid
 
