@@ -33,6 +33,26 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = []
 
+# ALL-AUTH CONFIG
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+# GOOGLE AUTH CONFIG
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': env('GOOGLE_CLIENT_ID'),
+            'secret': env('GOOGLE_SECRET'),
+            'key': ''  # Empty because not using it
+        }
+    }
+}
 
 # Application definition
 
@@ -43,6 +63,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # ALLAUTH
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+
+    # APPS
+    'category',
+    'inventory',
+    'store',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +85,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # ALLAUTH
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'ecommerce_app.urls'
@@ -81,8 +116,12 @@ WSGI_APPLICATION = 'ecommerce_app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': env('MYSQL_DATABASE'),
+        'USER': env('MYSQL_USER'),
+        'PASSWORD': env('MYSQL_PASSWORD'),
+        'HOST': env('MYSQL_HOST', default='db'),
+        'PORT': env('MYSQL_PORT', default='3306'),
     }
 }
 

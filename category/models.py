@@ -1,5 +1,5 @@
 """
-    MODELOS CATEGORÍAS
+    CATEGORY MODELS
 """
 
 
