@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Todas las migraciones
+*/migrations/*.py
+!*/migrations/__init__.py
+
 # C extensions
 *.so
 
@@ -32,6 +36,8 @@ docker-compose.yml
 docker-compose.override.yml
 *.pid
 entrypoint.sh
+wait-for-it.sh
+.dockerignore
 
 # MySQL data (if using volume mounts)
 mysql/
