@@ -1,91 +1,54 @@
-"""
-    ACCOUNTS MODELS
-"""
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 
-# BASEUSERS CONFIG
-class MyAccountManager(BaseUserManager):
-    def create_user(self, first_name, last_name, username, email, password=None):
+class AccountManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
         if not email:
-            raise ValueError('El usuario debe tener un email')
-        if not username:
-            raise ValueError('El usuario debe tener un username')
-
-        user = self.model(
-            email=self.normalize_email(email),
-            username=username,
-            first_name=first_name,
-            last_name=last_name,
-        )
+            raise ValueError(_("El usuario debe tener un correo electrónico válido"))
+        email = self.normalize_email(email)
+        extra_fields.setdefault('is_active', True)
+        user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
-        
         return user
 
-    def create_superuser(self, first_name, last_name, email, username, password):
-        user = self.create_user(
-            email=email,
-            username=username,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-        )
-        user.is_admin = True
-        user.is_staff = True
-        user.is_active = True
-        user.is_superadmin = True
-        user.save(using=self._db)
-        return user
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.update({'is_staff': True, 'is_superuser': True})
+        return self.create_user(email, password, **extra_fields)
 
-# BASEACCOUNT CONFIG
-class Account(AbstractBaseUser):
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=55)
-    username = models.CharField(max_length=50, unique=True)
-    email = models.EmailField(max_length=100, unique=True)
-    phone_number = models.CharField(max_length=15, blank=True)
+class Account(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(_("correo electrónico"), unique=True, max_length=255)
+    username = models.CharField(_("nombre de usuario"), max_length=50, unique=True, blank=False)  # Agregado
+    first_name = models.CharField(_("nombre"), max_length=50, blank=True)
+    last_name = models.CharField(_("apellido"), max_length=50, blank=True)
 
-    # Roles
-    is_admin = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=False)
-    is_superadmin = models.BooleanField(default=False)
-    is_customer = models.BooleanField(default=True)
+    is_active = models.BooleanField(_("activo"), default=True)
+    is_staff = models.BooleanField(_("es miembro del staff"), default=False)
+    is_superuser = models.BooleanField(_("es superusuario"), default=False)
+    is_customer = models.BooleanField(_("es cliente"), default=True)
 
-    date_joined = models.DateTimeField(auto_now_add=True)
-    last_login = models.DateTimeField(auto_now=True)
+    date_joined = models.DateTimeField(_("fecha de registro"), auto_now_add=True)
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]  # Agregado
 
-    objects = MyAccountManager()
-
-    def full_name(self):
-        return f'{self.first_name} {self.last_name}'
+    objects = AccountManager()
 
     def __str__(self):
         return self.email
 
-    def has_perm(self, perm, obj=None):
-        return self.is_admin
-
-    def has_module_perms(self, app_label):
-        return True
-
-# CLIENT USER EXTENSION
 class UserProfile(models.Model):
     user = models.OneToOneField(Account, on_delete=models.CASCADE, related_name="profile")
-    address_line_1 = models.CharField(max_length=100, blank=True)
-    address_line_2 = models.CharField(max_length=100, blank=True)
-    city = models.CharField(max_length=50, blank=True)
-    state = models.CharField(max_length=50, blank=True)
-    country = models.CharField(max_length=50, blank=True)
-    profile_picture = models.ImageField(upload_to='userprofile/', blank=True)
+    rut = models.CharField(_("RUT o identificación nacional"), max_length=20, blank=True)
+    profile_picture = models.ImageField(_("foto de perfil"), upload_to="user_profiles/", blank=True)
+    address = models.JSONField(_("dirección"), default=dict, blank=True)
+    phone_number = models.CharField(_("número de teléfono"), max_length=15, blank=True)
+    additional_data = models.JSONField(_("datos adicionales"), default=dict, blank=True)
 
     def __str__(self):
-        return self.user.full_name()
+        return self.user.email
 
-    def full_address(self):
-        return f"{self.address_line_1} {self.address_line_2}, {self.city}, {self.state}, {self.country}"
+    def get_full_address(self):
+        address = self.address or {}
+        return f"{address.get('line1', '')}, {address.get('line2', '')}, {address.get('city', '')}, {address.get('state', '')}, {address.get('country', '')}"

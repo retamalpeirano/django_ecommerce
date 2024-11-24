@@ -21,6 +21,8 @@ environ.Env.read_env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+## DEV ##
+SILENCED_SYSTEM_CHECKS = ['models.W036']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -42,6 +44,7 @@ AUTHENTICATION_BACKENDS = [
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_SIGNUP_REDIRECT_URL = '/'
 
 # GOOGLE AUTH CONFIG
 SOCIALACCOUNT_PROVIDERS = {
@@ -53,6 +56,19 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+
+# Modelo de usuario
+AUTH_USER_MODEL = 'accounts.Account'
+
+# Allauth Adapters
+ACCOUNT_ADAPTER = 'accounts.adapters.MyAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'accounts.adapters.MySocialAccountAdapter'
+
+# ACCOUNT VERIFICATION
+ACCOUNT_EMAIL_REQUIRED = True 
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Requiere verificación del correo
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True  # Activa al hacer clic en el enlace
+
 
 # Application definition
 
