@@ -19,13 +19,21 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('allauth.urls')),
-    path('', views.home, name='home'),
-    path('store/', include('store.urls')),
+    path('accounts/', include('allauth.urls')),  # URLs de Django Allauth
+    path('', views.home, name='home'),          # Página principal
+    path('store/', include('store.urls')),      # URLs de la tienda
+
+    # URLs adicionales para autenticación
+    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),   # Inicio de sesión
+    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'), # Cierre de sesión
+
+    path('dashboard/', views.dashboard, name='dashboard'), #Error del dash???
 ]
 
+# Manejo de archivos estáticos y medios en modo DEBUG
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

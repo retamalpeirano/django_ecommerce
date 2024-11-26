@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda</title>
+</head>
+<body>
+    <h1>Tienda</h1>
+    <div>
+        {% if products %}
+            <ul>
+                {% for product in products %}
+                    <li>
+                        <a href="{{ product.get_url }}">
+                            <h2>{{ product.name }}</h2>
+                        </a>
+                        <p>{{ product.description|truncatewords:15 }}</p>
+                        <p><strong>Precio:</strong> ${{ product.price }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+            <!-- Paginación -->
+            <div>
+                {% if products.has_previous %}
+                    <a href="?page={{ products.previous_page_number }}">Anterior</a>
+                {% endif %}
+                <span>Página {{ products.number }} de {{ products.paginator.num_pages }}</span>
+                {% if products.has_next %}
+                    <a href="?page={{ products.next_page_number }}">Siguiente</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <p>No se encontraron productos.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
