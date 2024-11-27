@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import UserProfile
@@ -33,6 +34,9 @@ def profile(request):
     }
     return render(request, 'accounts/profile.html', context)
 
+@login_required
+def dashboard(request):
+    return render(request, 'accounts/dashboard.html')  # Ajusta la plantilla si es necesario
 
 # Vista personalizada para registro manual usando Allauth
 class CustomSignupView(SignupView):

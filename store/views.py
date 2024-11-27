@@ -11,18 +11,24 @@ from django.contrib import messages
 def store(request, category_slug=None):
     """
     Muestra productos por categoría o todos los productos si no se especifica una categoría.
+    Adicionalmente permite filtrar por rango de precios.
     """
     categories = None
-    products = None
+    products = Product.objects.filter(is_available=True)  # Inicializamos los productos disponibles
 
+    # Filtrar por categoría si se pasa en la URL
     if category_slug:
         categories = get_object_or_404(Category, slug=category_slug)
-        products = Product.objects.filter(category=categories, is_available=True)
-    else:
-        products = Product.objects.filter(is_available=True)
+        products = products.filter(category=categories)
+
+    # Filtrar por rango de precios si los parámetros están presentes
+    min_price = request.GET.get('min_price', None)
+    max_price = request.GET.get('max_price', None)
+    if min_price and max_price:
+        products = products.filter(price__gte=min_price, price__lte=max_price)
 
     # Paginación
-    paginator = Paginator(products, 6)
+    paginator = Paginator(products, 6)  # Mostrar 6 productos por página
     page = request.GET.get('page')
     try:
         paged_products = paginator.page(page)
@@ -33,6 +39,7 @@ def store(request, category_slug=None):
 
     context = {
         'products': paged_products,
+        'product_count': products.count(),  # Número total de productos después del filtrado
         'categories': categories,
     }
     return render(request, 'store/store.html', context)
@@ -69,13 +76,14 @@ def search(request):
     query = request.GET.get('keyword')
     if query:
         products = Product.objects.filter(
-            Q(name__icontains=query) | Q(description__icontains=query), is_available=True
+            Q(product_name__icontains=query) | Q(description__icontains=query), is_available=True
         )
 
     context = {
         'products': products,
     }
     return render(request, 'store/store.html', context)
+
 
 def submit_review(request, product_id):
     """
@@ -105,3 +113,9 @@ def submit_review(request, product_id):
                 messages.success(request, '¡Gracias por tu comentario!')
     
     return redirect(url)
+
+
+def add_cart(request, product_id):
+    # Aquí va la lógica para agregar el producto al carrito.
+    # Como ejemplo básico, redirigiremos a la tienda.
+    return redirect('store')

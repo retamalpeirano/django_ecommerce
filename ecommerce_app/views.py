@@ -16,4 +16,9 @@ def home(request):
         'product_reviews': product_reviews,
     }
 
-    return render(request, 'index.html', context)
+    return render(request, 'home.html', context)
+
+
+def dashboard(request):
+    # Puedes agregar lógica personalizada aquí
+    return render(request, 'accounts/dashboard.html')  # Asegúrate de que la plantilla `dashboard.html` exista
