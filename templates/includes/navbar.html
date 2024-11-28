@@ -61,15 +61,15 @@
               <small class="title text-muted">Bienvenido/a {{ user.first_name }}</small>
               <div>
                 <a href="{% url 'dashboard' %}">Mi cuenta</a> <span class="dark-transp"> | </span>
-                <a href="{% url 'logout' %}">Cerrar sesión</a>
+                <a href="{% url 'accounts:logout' %}">Cerrar sesión</a>
               </div>
             </div>
             {% else %}
             <div class="widget-header">
               <small class="title text-muted">Bienvenido a GrowFood!</small>
               <div>
-                <a href="{% url 'login' %}">Iniciar Sesión</a> <span class="dark-transp"> | </span>
-                <a href="{% url 'account_signup' %}">Registrarse</a>
+                <a href="{% url 'accounts:account_login' %}">Iniciar Sesión</a> <span class="dark-transp"> | </span>
+                <a href="{% url 'accounts:custom_signup' %}">Registrarse</a>
               </div>
             </div>
             {% endif %}

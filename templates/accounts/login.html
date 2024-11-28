@@ -12,7 +12,7 @@
         Gracias por registrarte en GrowFood, te hemos enviado un email para confirmar tu cuenta a [{{ request.GET.email }}]
         <br>
         <br>
-        Si ya verificaste tu cuenta puedes iniciar sesión: <a href="{% url 'login' %}">Entrar a mi cuenta</a>
+        Si ya verificaste tu cuenta puedes iniciar sesión: <a href="{% url 'accounts:account_login' %}">Entrar a mi cuenta</a>
       </div>
 
     {% else %}
@@ -21,7 +21,7 @@
           {% include 'includes/alerts.html' %}
           <div class="card-body">
           <h4 class="card-title mb-4">Inicio de sesión</h4>
-          <form action="{% url 'login' %}" method="POST">
+          <form action="{% url 'accounts:account_login' %}" method="POST">
               {% csrf_token %}
 
               <div class="form-group">
@@ -32,7 +32,7 @@
               </div> <!-- form-group// -->
 
               <div class="form-group">
-                  <a href="{% url 'forgotPassword' %}" class="float-right">¿Olvidaste tu contraseña?</a>
+                  <a href="{% url 'accounts:reset_password' %}" class="float-right">¿Olvidaste tu contraseña?</a>
 
               </div> <!-- form-group form-check .// -->
               <div class="form-group">
@@ -42,7 +42,7 @@
           </div> <!-- card-body.// -->
         </div> <!-- card .// -->
 
-         <p class="text-center mt-4">¿No tienes una cuenta? <a href="{% url 'register' %}">Registrate</a></p>
+         <p class="text-center mt-4">¿No tienes una cuenta? <a href="{% url 'accounts:custom_signup' %}">Registrate</a></p>
          <br><br>
     <!-- ============================ COMPONENT LOGIN  END.// ================================= -->
     {% endif %}
