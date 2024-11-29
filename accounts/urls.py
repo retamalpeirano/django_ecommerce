@@ -2,8 +2,6 @@ from django.urls import path, include
 from .views import profile
 from django.contrib.auth.views import PasswordResetView, PasswordChangeView
 
-app_name = 'accounts'
-
 urlpatterns = [
     path('', include('allauth.urls')),
     path('profile/', profile, name='profile'),

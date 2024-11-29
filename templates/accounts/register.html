@@ -11,7 +11,7 @@
           <article class="card-body">
             {% include 'includes/alerts.html' %}
             <header class="mb-4"><h4 class="card-title">Registro de Usuario</h4></header>
-            <form action="{% url '' %}" method="POST">
+            <form action="{% url 'account_signup' %}" method="POST">
                 {% csrf_token %}
 
                     <div class="form-row">
@@ -56,7 +56,7 @@
                 </form>
             </article><!-- card-body.// -->
         </div> <!-- card .// -->
-        <p class="text-center mt-4">¿Tienes ya una cuenta? <a href="{% url 'accounts:account_login' %}">Inicia Sesión</a></p>
+        <p class="text-center mt-4">¿Tienes ya una cuenta? <a href="{% url 'account_login' %}">Inicia Sesión</a></p>
         <br><br>
     <!-- ============================ COMPONENT REGISTER  END.// ================================= -->
 
