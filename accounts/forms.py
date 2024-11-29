@@ -1,7 +1,6 @@
 from django import forms
 from .models import UserProfile
 from django.contrib.auth import get_user_model
-from allauth.account.forms import SignupForm
 
 User = get_user_model()
 
