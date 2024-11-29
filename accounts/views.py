@@ -1,10 +1,9 @@
 
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import UserProfile
-from .forms import UserForm, UserProfileForm, CustomSignupForm
+from .forms import UserForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
-from allauth.account.views import SignupView
 
 
 # Vista para perfil de usuario
@@ -38,12 +37,3 @@ def profile(request):
 def dashboard(request):
     return render(request, 'accounts/dashboard.html')  # Ajusta la plantilla si es necesario
 
-# Vista personalizada para registro manual usando Allauth
-class CustomSignupView(SignupView):
-    template_name = "accounts/signup.html"
-    form_class = CustomSignupForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["custom_signup"] = True
-        return context

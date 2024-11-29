@@ -53,17 +53,3 @@ class UserForm(forms.ModelForm):
         super(UserForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
-
-# Formulario para registro manual
-class CustomSignupForm(SignupForm):
-    username = forms.CharField(max_length=50, required=True, label="Nombre de usuario")
-    first_name = forms.CharField(max_length=30, required=True, label="Nombre")
-    last_name = forms.CharField(max_length=30, required=True, label="Apellido")
-
-    def save(self, request):
-        user = super(CustomSignupForm, self).save(request)
-        user.username = self.cleaned_data['username']
-        user.first_name = self.cleaned_data['first_name']
-        user.last_name = self.cleaned_data['last_name']
-        user.save()
-        return user
