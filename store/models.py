@@ -26,13 +26,21 @@ class Product(models.Model):
     def __str__(self):
         return self.product_name
 
+    def average_and_count_review(self):
+        result = Product.objects.filter(id=self.id).annotate(
+            average=Avg('reviewrating__rating'),
+            count=Count('reviewrating')
+        ).values('average', 'count').first()
+        return (
+            float(result['average']) if result and result['average'] else 0,
+            int(result['count']) if result and result['count'] else 0,
+        )
+
     def averageReview(self):
-        reviews = ReviewRating.objects.filter(product=self, status=True).aggregate(average=Avg('rating'))
-        return float(reviews['average']) if reviews['average'] else 0
+        return self.average_and_count_review()[0]
 
     def countReview(self):
-        reviews = ReviewRating.objects.filter(product=self, status=True).aggregate(count=Count('id'))
-        return int(reviews['count']) if reviews['count'] else 0
+        return self.average_and_count_review()[1]
 
 
 class ReviewRating(models.Model):

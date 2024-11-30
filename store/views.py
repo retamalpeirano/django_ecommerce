@@ -46,24 +46,25 @@ def store(request, category_slug=None):
 
 
 def product_detail(request, category_slug, product_slug):
-    """
-    Muestra los detalles de un producto específico.
-    """
     try:
         single_product = Product.objects.get(category__slug=category_slug, slug=product_slug)
         inventory = Inventory.objects.filter(product=single_product).first()
     except Product.DoesNotExist:
-        single_product = None
-        inventory = None
+        messages.error(request, 'Producto no encontrado.')
+        return redirect('store')
 
     reviews = ReviewRating.objects.filter(product=single_product, status=True)
 
-    review_form = ReviewForm()
+    # Obtener promedio y conteo de reseñas
+    average_review, count_review = single_product.average_and_count_review()
+
     context = {
         'single_product': single_product,
         'inventory': inventory,
         'reviews': reviews,
-        'review_form': review_form,
+        'review_form': ReviewForm(),
+        'average_review': average_review,
+        'count_review': count_review,
     }
     return render(request, 'store/product_detail.html', context)
 
@@ -86,32 +87,28 @@ def search(request):
 
 
 def submit_review(request, product_id):
-    """
-    Permite que los usuarios dejen reseñas en los productos. Si ya existe una reseña del usuario para el producto,
-    la actualiza. Si no, crea una nueva.
-    """
     url = request.META.get('HTTP_REFERER', '/')
     product = get_object_or_404(Product, id=product_id)
 
+    if not request.user.is_authenticated:
+        messages.error(request, 'Debes iniciar sesión para dejar una reseña.')
+        return redirect(url)
+
     if request.method == 'POST':
-        try:
-            # Intentar recuperar una reseña existente
-            existing_review = ReviewRating.objects.get(user=request.user, product=product)
-            form = ReviewForm(request.POST, instance=existing_review)
-            if form.is_valid():
-                form.save()
+        review_instance = ReviewRating.objects.filter(user=request.user, product=product).first()
+        form = ReviewForm(request.POST, instance=review_instance)
+
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.product = product
+            review.user = request.user
+            review.ip = request.META.get('REMOTE_ADDR', '')
+            review.save()
+            if review_instance:
                 messages.success(request, '¡Tu comentario ha sido actualizado con éxito!')
-        except ReviewRating.DoesNotExist:
-            # Crear una nueva reseña
-            form = ReviewForm(request.POST)
-            if form.is_valid():
-                new_review = form.save(commit=False)
-                new_review.product = product
-                new_review.user = request.user
-                new_review.ip = request.META.get('REMOTE_ADDR', '')
-                new_review.save()
+            else:
                 messages.success(request, '¡Gracias por tu comentario!')
-    
+
     return redirect(url)
 
 
