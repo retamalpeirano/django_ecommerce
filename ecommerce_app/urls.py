@@ -7,9 +7,11 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
-    path('accounts/', include('accounts.urls')),  
+    path('accounts/', include('accounts.urls')),
     path('store/', include('store.urls')),
+    path('dashboard/', views.dashboard, name='dashboard'),
 ]
 
+# Manejo de archivos estáticos y medios en modo DEBUG
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
