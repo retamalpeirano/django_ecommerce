@@ -11,6 +11,10 @@ def create_order(request):
     cart = get_or_create_cart(request)
     user = request.user if request.user.is_authenticated else None
 
+    # Verificar si el carrito está vacío
+    if not cart.cartitems.exists():
+        return JsonResponse({"error": "El carrito está vacío."}, status=400)
+
     try:
         # Crear la orden usando el método del modelo Order
         order = Order.create_from_cart(cart, user=user, session=cart.session)
