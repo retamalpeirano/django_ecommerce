@@ -1,8 +1,8 @@
-from django.db import models
+from django.db import models, transaction
 from accounts.models import Account
 from store.models import Product
-from inventory.models import Inventory
-from django.utils import timezone
+#from inventory.models import Inventory # NO ESTA USANDOSE ACTUALMENTE
+#from django.utils import timezone # NO ESTA USANDOSE ACTUALMENTE
 from django.contrib.sessions.models import Session
 
 
@@ -39,6 +39,16 @@ class CartItem(models.Model):
         return self.product.price * self.quantity
 
 
+# Excepciones personalizadas
+class CartError(Exception):
+    """Excepción base para errores relacionados con el carrito."""
+    pass
+
+class StockError(CartError):
+    """Excepción para errores de inventario."""
+    pass
+
+
 # Funciones auxiliares para el carrito
 def get_or_create_cart(request):
     """Obtiene o crea un carrito para un usuario autenticado o una sesión."""
@@ -53,31 +63,52 @@ def get_or_create_cart(request):
 def add_to_cart(cart, product, quantity=1):
     """Agrega un producto al carrito, verificando disponibilidad y stock."""
     if not product.is_available:
-        raise ValueError("Este producto no está disponible.")
+        raise CartError("Este producto no está disponible.")
     
     inventory = product.inventory
     if inventory and inventory.stock < quantity:
-        raise ValueError("No hay suficiente stock para este producto.")
+        raise StockError("No hay suficiente stock para este producto.")
+    
+    with transaction.atomic():
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+        if created:
+            cart_item.quantity = quantity
+        else:
+            cart_item.quantity += quantity
 
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-    if created:
-        cart_item.quantity = quantity
-    else:
-        cart_item.quantity += quantity
+        cart_item.save()
 
-    cart_item.save()
+        # Actualizar stock en inventario
+        inventory.stock -= quantity
+        inventory.save()
+    
     return cart_item
 
 
 def update_cart_item(cart_item, quantity):
     """Actualiza la cantidad de un producto en el carrito o lo elimina si la cantidad es cero."""
     if quantity <= 0:
-        cart_item.delete()
+        remove_from_cart(cart_item)
     else:
-        cart_item.quantity = quantity
-        cart_item.save()
+        inventory = cart_item.product.inventory
+        with transaction.atomic():
+            if inventory and inventory.stock + cart_item.quantity < quantity:
+                raise StockError("Stock insuficiente para actualizar la cantidad.")
+            
+            # Revertir stock anterior y descontar nueva cantidad
+            inventory.stock += cart_item.quantity  # Revertir cantidad actual
+            inventory.stock -= quantity  # Aplicar nueva cantidad
+            inventory.save()
+
+            cart_item.quantity = quantity
+            cart_item.save()
 
 
 def remove_from_cart(cart_item):
-    """Elimina un producto del carrito."""
-    cart_item.delete()
+    """Elimina un producto del carrito y restaura el stock."""
+    with transaction.atomic():
+        inventory = cart_item.product.inventory
+        if inventory:
+            inventory.stock += cart_item.quantity
+            inventory.save()
+        cart_item.delete()
