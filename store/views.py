@@ -1,3 +1,6 @@
+"""
+    STORE VIEWS
+"""
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .models import Product, ReviewRating
@@ -44,6 +47,7 @@ def store(request, category_slug=None):
     }
     return render(request, 'store/store.html', context)
 
+
 def product_detail(request, category_slug, product_slug):
     try:
         single_product = Product.objects.get(category__slug=category_slug, slug=product_slug)
@@ -67,6 +71,7 @@ def product_detail(request, category_slug, product_slug):
     }
     return render(request, 'store/product_detail.html', context)
 
+
 def search(request):
     """
     Permite buscar productos según palabras clave.
@@ -82,6 +87,7 @@ def search(request):
         'products': products,
     }
     return render(request, 'store/store.html', context)
+
 
 def submit_review(request, product_id):
     url = request.META.get('HTTP_REFERER', '/')
@@ -102,6 +108,7 @@ def submit_review(request, product_id):
             messages.success(request, '¡Tu comentario ha sido guardado con éxito!')
             
     return redirect(url)
+
 
 def add_cart(request, product_id):
     # Aquí va la lógica para agregar el producto al carrito.
