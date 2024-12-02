@@ -25,6 +25,50 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Pedido {self.id} - Estado: {self.get_status_display()}"
+    
+    @classmethod
+    def create_from_cart(cls, cart, user=None, session=None):
+        """Crea una orden a partir de un carrito."""
+        if not cart.cartitems.exists():
+            raise ValueError("El carrito está vacío y no se puede crear una orden.")
+
+        with transaction.atomic():
+            order = cls.objects.create(
+                user=user,
+                session=session,
+                total_price=cart.total_cost(),
+                status='pending'
+            )
+
+            for cart_item in cart.cartitems.all():
+                product = cart_item.product
+                inventory = product.inventory
+
+                if inventory.stock < cart_item.quantity:
+                    raise ValueError(f"No hay suficiente stock para el producto {product.product_name}.")
+
+                # Registrar ítems de la orden
+                OrderItem.objects.create(
+                    order=order,
+                    product=product,
+                    quantity=cart_item.quantity,
+                    price=product.price
+                )
+
+                # Descontar stock y registrar movimiento
+                inventory.stock -= cart_item.quantity
+                inventory.save()
+
+                StockMovement.register_movement(
+                    inventory=inventory,
+                    movement_type='salida',
+                    quantity=cart_item.quantity
+                )
+
+            # Vaciar el carrito
+            cart.cartitems.all().delete()
+
+        return order
 
 
 class OrderItem(models.Model):
