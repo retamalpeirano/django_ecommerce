@@ -44,7 +44,6 @@ def store(request, category_slug=None):
     }
     return render(request, 'store/store.html', context)
 
-
 def product_detail(request, category_slug, product_slug):
     try:
         single_product = Product.objects.get(category__slug=category_slug, slug=product_slug)
@@ -68,7 +67,6 @@ def product_detail(request, category_slug, product_slug):
     }
     return render(request, 'store/product_detail.html', context)
 
-
 def search(request):
     """
     Permite buscar productos según palabras clave.
@@ -85,7 +83,6 @@ def search(request):
     }
     return render(request, 'store/store.html', context)
 
-
 def submit_review(request, product_id):
     url = request.META.get('HTTP_REFERER', '/')
     product = get_object_or_404(Product, id=product_id)
@@ -93,24 +90,18 @@ def submit_review(request, product_id):
     if not request.user.is_authenticated:
         messages.error(request, 'Debes iniciar sesión para dejar una reseña.')
         return redirect(url)
-
+    
     if request.method == 'POST':
-        review_instance = ReviewRating.objects.filter(user=request.user, product=product).first()
-        form = ReviewForm(request.POST, instance=review_instance)
-
+        form = ReviewForm(request.POST, instance=ReviewRating.objects.filter(user=request.user, product=product).first())
         if form.is_valid():
             review = form.save(commit=False)
             review.product = product
             review.user = request.user
             review.ip = request.META.get('REMOTE_ADDR', '')
             review.save()
-            if review_instance:
-                messages.success(request, '¡Tu comentario ha sido actualizado con éxito!')
-            else:
-                messages.success(request, '¡Gracias por tu comentario!')
-
+            messages.success(request, '¡Tu comentario ha sido guardado con éxito!')
+            
     return redirect(url)
-
 
 def add_cart(request, product_id):
     # Aquí va la lógica para agregar el producto al carrito.
