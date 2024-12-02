@@ -2,9 +2,11 @@ from django.db import models
 from accounts.models import Account
 from store.models import Product
 from cart.models import Cart, CartItem
+from inventory.models import StockMovement
 from django.contrib.sessions.models import Session
 from django.utils.translation import gettext_lazy as _
 from django.utils.timezone import now
+from django.db import transaction
 
 
 class Order(models.Model):

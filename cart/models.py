@@ -52,16 +52,26 @@ class StockError(CartError):
 # Funciones auxiliares para el carrito
 def get_or_create_cart(request):
     """Obtiene o crea un carrito para un usuario autenticado o una sesión."""
+    # Validar si existe una sesión activa; si no, crear una nueva
+    if not request.session.session_key:
+        request.session.create()
+
     if request.user.is_authenticated:
+        # Carrito asociado al usuario autenticado
         cart, created = Cart.objects.get_or_create(user=request.user)
     else:
+        # Carrito asociado a la sesión anónima
         session, _ = Session.objects.get_or_create(session_key=request.session.session_key)
         cart, created = Cart.objects.get_or_create(session=session)
+    
     return cart
 
 
 def add_to_cart(cart, product, quantity=1):
-    """Agrega un producto al carrito, verificando disponibilidad y stock."""
+    """Agrega un producto al carrito, verificando disponibilidad."""
+    if quantity <= 0:
+        raise CartError("La cantidad debe ser mayor a cero.")
+
     if not product.is_available:
         raise CartError("Este producto no está disponible.")
     
@@ -77,10 +87,6 @@ def add_to_cart(cart, product, quantity=1):
             cart_item.quantity += quantity
 
         cart_item.save()
-
-        # Actualizar stock en inventario
-        inventory.stock -= quantity
-        inventory.save()
     
     return cart_item
 
