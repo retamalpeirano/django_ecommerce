@@ -21,9 +21,24 @@ def sync_cart_to_user(sender, request, user, **kwargs):
             if not created:
                 # Combinar ítems del carrito de sesión al carrito del usuario
                 for item in session_cart.cartitems.all():
+                    # Verificar si el producto está disponible
+                    if not item.product.is_available:
+                        continue  # Omitir productos no disponibles
+
+                    # Verificar si hay suficiente stock para la cantidad
+                    inventory = item.product.inventory
+                    if inventory and inventory.stock < item.quantity:
+                        continue  # Omitir productos sin suficiente stock
+
+                    # Combinar ítems al carrito del usuario
                     existing_item = user_cart.cartitems.filter(product=item.product).first()
                     if existing_item:
-                        existing_item.quantity += item.quantity
+                        total_quantity = existing_item.quantity + item.quantity
+                        if inventory and inventory.stock < total_quantity:
+                            # Ajustar la cantidad al stock disponible
+                            existing_item.quantity = inventory.stock
+                        else:
+                            existing_item.quantity = total_quantity
                         existing_item.save()
                     else:
                         item.cart = user_cart
@@ -32,7 +47,7 @@ def sync_cart_to_user(sender, request, user, **kwargs):
             # Eliminar el carrito de sesión después de transferir sus ítems
             session_cart.delete()
 
-            # Finalmente, desvincular la sesión del carrito si aún no lo está
+            # Desvincular la sesión del carrito si aún no lo está
             user_cart.session = None
             user_cart.save()
 

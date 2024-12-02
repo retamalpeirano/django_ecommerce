@@ -70,6 +70,10 @@ class Order(models.Model):
             # Vaciar el carrito
             cart.cartitems.all().delete()
 
+        # Registrar en el log que la orden fue creada con éxito
+        logger = logging.getLogger(__name__)
+        logger.info(f"Orden {order.id} creada exitosamente para el usuario {user.id if user else 'anónimo'}.")
+
         return order
 
 
