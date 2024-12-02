@@ -58,12 +58,16 @@ def product_detail(request, category_slug, product_slug):
 
     reviews = ReviewRating.objects.filter(product=single_product, status=True)
 
+    # Validar si hay stock disponible
+    #is_in_stock = inventory and inventory.stock > 0
+
     # Obtener promedio y conteo de reseñas
     average_review, count_review = single_product.average_and_count_review()
 
     context = {
         'single_product': single_product,
         'inventory': inventory,
+        #'is_in_stock': is_in_stock,
         'reviews': reviews,
         'review_form': ReviewForm(),
         'average_review': average_review,
