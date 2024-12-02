@@ -17,7 +17,7 @@ def store(request, category_slug=None):
     Adicionalmente permite filtrar por rango de precios.
     """
     categories = None
-    products = Product.objects.filter(is_available=True)  # Inicializamos los productos disponibles
+    products = Product.objects.filter(is_available=True).order_by('product_name')  # Ordenar por nombre del producto # Inicializamos los productos disponibles
 
     # Filtrar por categoría si se pasa en la URL
     if category_slug:
