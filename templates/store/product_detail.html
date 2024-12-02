@@ -107,11 +107,11 @@
             <br>
             {% if user.is_authenticated %}
 
-            {% if orderproduct %}
-            <input type="submit" name="" value="Enviar reseña" class="btn btn-primary">
-            {% else %}
+            <!--{% if orderproduct %}-->
+              <input type="submit" name="" value="Enviar reseña" class="btn btn-primary">
+            <!--{% else %}
               <p>Primero necesitas comprar el producto para escribir una reseña!</p>
-            {% endif %}
+            {% endif %}-->
 
             {% else %}
               <p>Para enviar un comentario debes estar registrado <span><a href="{% url 'login' %}">Inicia Sesión</a></span></p>
