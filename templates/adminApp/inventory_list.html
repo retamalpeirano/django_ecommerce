@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Listado de Inventarios</h1>
+<a href="{% url 'adminApp:inventory_create' %}" class="btn btn-primary">Registrar Nuevo Inventario</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Stock</th>
+            <th>Stock Mínimo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for inventory in inventories %}
+        <tr>
+            <td>{{ inventory.product.product_name }}</td>
+            <td>{{ inventory.stock }}</td>
+            <td>{{ inventory.stock_minimum }}</td>
+            <td>
+                <a href="{% url 'adminApp:inventory_update' inventory.id %}">Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

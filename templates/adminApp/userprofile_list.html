@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Listado de Perfiles de Usuario</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>RUT</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+            <th>Opciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for profile in user_profiles %}
+        <tr>
+            <td>{{ profile.user.email }}</td>
+            <td>{{ profile.rut }}</td>
+            <td>{{ profile.phone_number }}</td>
+            <td>{{ profile.get_full_address }}</td>
+            <td>
+                <a href="{% url 'adminApp:userprofile_update' profile.id %}" class="btn btn-primary btn-sm">Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -124,6 +124,7 @@ INSTALLED_APPS = [
     'accounts',
     'cart',
     'orders',
+    'adminApp',
 ]
 
 MIDDLEWARE = [

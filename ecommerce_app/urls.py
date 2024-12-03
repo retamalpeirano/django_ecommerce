@@ -12,6 +12,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('orders/', include('orders.urls')),
     path('cart/', include('cart.urls')),
+    path('erp/', include('adminApp.urls')),
 ]
 
 # Manejo de archivos estáticos y medios en modo DEBUG

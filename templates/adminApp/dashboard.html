@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Dashboard Administrativo</h1>
+<ul>
+    <li><a href="{% url 'adminApp:category_list' %}">Gestionar Categorías</a></li>
+    <li><a href="{% url 'adminApp:product_list' %}">Gestionar Productos</a></li>
+    <li><a href="{% url 'adminApp:reviewrating_list' %}">Gestionar Reviews de Productos</a></li>
+    <li><a href="{% url 'adminApp:inventory_list' %}">Gestionar Inventarios de Productos</a></li>
+</ul>
+<div>
+    <p>Total Categorías: {{ category_count }}</p>
+</div>
+{% if low_stock_alerts %}
+<div class="alert alert-warning" role="alert">
+    <h4>Alertas de bajo stock:</h4>
+    <ul>
+        {% for alert in low_stock_alerts %}
+        <li>{{ alert }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Listado de Reseñas</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Usuario</th>
+            <th>Asunto</th>
+            <th>Calificación</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for review in reviews %}
+        <tr>
+            <td>{{ review.product.product_name }}</td>
+            <td>{{ review.user.email }}</td>
+            <td>{{ review.subject }}</td>
+            <td>{{ review.rating }}</td>
+            <td>
+                <a href="{% url 'adminApp:reviewrating_delete' review.id %}">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
