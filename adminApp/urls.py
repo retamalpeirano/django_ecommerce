@@ -28,4 +28,10 @@ urlpatterns = [
     path('inventory/', views.InventoryListView.as_view(), name='inventory_list'),
     path('inventory/create/', views.InventoryCreateView.as_view(), name='inventory_create'),
     path('inventory/<int:pk>/update/', views.InventoryUpdateView.as_view(), name='inventory_update'),
+
+    # Ordenes
+    path('orders/', views.OrderListView.as_view(), name='order_list'),
+    path('orders/export-csv/', views.export_orders_csv, name='export_orders_csv'),
+    path('orders/<int:order_id>/items/', views.OrderItemListView.as_view(), name='order_items_list'),
+    path('orders/<int:order_id>/items/export-csv/', views.export_order_items_csv, name='export_order_items_csv'),
 ]

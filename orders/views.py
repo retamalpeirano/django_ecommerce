@@ -16,8 +16,8 @@ def create_order(request):
         return JsonResponse({"error": "El carrito está vacío."}, status=400)
 
     # Verificar si ya existe una orden pendiente para este carrito
-    #if Order.objects.filter(user=user, session=cart.session, status='pending').exists():
-    #    return JsonResponse({"error": "Ya existe una orden pendiente para este carrito."}, status=400)
+    if Order.objects.filter(user=user, session=cart.session, status='pending').exists():
+        return JsonResponse({"error": "Ya existe una orden pendiente para este carrito."}, status=400)
 
     try:
         # Crear la orden usando el método del modelo Order
