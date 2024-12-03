@@ -1,13 +1,14 @@
-from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
+from django.shortcuts import redirect
+from django.http import HttpResponse
+from django.urls import reverse_lazy
+from accounts.models import Account, UserProfile
 from category.models import Category
 from store.models import Product, ReviewRating
 from inventory.models import Inventory, StockMovement
-from django.http import HttpResponse
 from orders.models import Order, OrderItem
-from django.shortcuts import redirect
 import csv
 
 
@@ -297,3 +298,38 @@ def export_order_items_csv(request, order_id):
 
     return response
 
+""" 
+    CUENTAS Y PERFILES
+"""
+
+# Listar Cuentas
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class AccountListView(ListView):
+    model = Account
+    template_name = "adminApp/account_list.html"
+    context_object_name = "accounts"
+    paginate_by = 10
+
+# Actualizar Cuentas
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class AccountUpdateView(UpdateView):
+    model = Account
+    fields = ['email', 'username', 'first_name', 'last_name', 'is_active', 'is_staff', 'is_superuser', 'is_customer']
+    template_name = "adminApp/account_form.html"
+    success_url = reverse_lazy('adminApp:account_list')
+
+# Listar Perfiles de Usuario
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class UserProfileListView(ListView):
+    model = UserProfile
+    template_name = "adminApp/userprofile_list.html"
+    context_object_name = "user_profiles"
+    paginate_by = 10
+
+# Actualizar Perfiles de Usuario
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class UserProfileUpdateView(UpdateView):
+    model = UserProfile
+    fields = ['rut', 'profile_picture', 'address', 'phone_number', 'additional_data']
+    template_name = "adminApp/userprofile_form.html"
+    success_url = reverse_lazy('adminApp:userprofile_list')

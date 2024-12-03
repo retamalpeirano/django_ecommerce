@@ -29,9 +29,15 @@ urlpatterns = [
     path('inventory/create/', views.InventoryCreateView.as_view(), name='inventory_create'),
     path('inventory/<int:pk>/update/', views.InventoryUpdateView.as_view(), name='inventory_update'),
 
-    # Ordenes
+    # Ordenes y detalles de orden
     path('orders/', views.OrderListView.as_view(), name='order_list'),
     path('orders/export-csv/', views.export_orders_csv, name='export_orders_csv'),
     path('orders/<int:order_id>/items/', views.OrderItemListView.as_view(), name='order_items_list'),
     path('orders/<int:order_id>/items/export-csv/', views.export_order_items_csv, name='export_order_items_csv'),
+
+    # Cuentas de usuario y perfiles de usuario
+    path('accounts/', views.AccountListView.as_view(), name='account_list'),
+    path('accounts/<int:pk>/update/', views.AccountUpdateView.as_view(), name='account_update'),
+    path('userprofiles/', views.UserProfileListView.as_view(), name='userprofile_list'),
+    path('userprofiles/<int:pk>/update/', views.UserProfileUpdateView.as_view(), name='userprofile_update'),
 ]
