@@ -11,4 +11,14 @@
 <div>
     <p>Total Categorías: {{ category_count }}</p>
 </div>
+{% if low_stock_alerts %}
+<div class="alert alert-warning" role="alert">
+    <h4>Alertas de bajo stock:</h4>
+    <ul>
+        {% for alert in low_stock_alerts %}
+        <li>{{ alert }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
 {% endblock %}
