@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1>Listado de Categorías</h1>
-<a href="{% url 'category_create' %}" class="btn btn-primary">Crear Nueva Categoría</a>
+<a href="{% url 'adminApp:category_create' %}" class="btn btn-primary">Crear Nueva Categoría</a>
 <table class="table">
     <thead>
         <tr>
@@ -17,8 +17,8 @@
             <td>{{ category.category_name }}</td>
             <td>{{ category.description }}</td>
             <td>
-                <a href="{% url 'category_update' category.id %}">Editar</a>
-                <a href="{% url 'category_delete' category.id %}">Eliminar</a>
+                <a href="{% url 'adminApp:category_update' category.id %}">Editar</a>
+                <a href="{% url 'adminApp:category_delete' category.id %}">Eliminar</a>
             </td>
         </tr>
         {% endfor %}

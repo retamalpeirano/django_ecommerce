@@ -1,12 +1,12 @@
 from django.urls import path
 from . import views
 
-# app_name = 'adminApp'
+app_name = 'adminApp'
 
 urlpatterns = [
     
     # Dashboard
-    path('', views.dashboard, name='dashboard'),
+    path('', views.DashboardView.as_view(), name='dashboard'),
     
     # Categorías
     path('categories/', views.CategoryListView.as_view(), name='category_list'),
