@@ -7,7 +7,9 @@ from store.models import Product, ReviewRating
 from inventory.models import Inventory, StockMovement
 from django.http import HttpResponse
 from orders.models import Order, OrderItem
+from django.shortcuts import redirect
 import csv
+
 
 # Restricción para usuarios administradores
 def admin_required(user):
@@ -202,6 +204,15 @@ class OrderListView(ListView):
             queryset = queryset.filter(created_at__range=[start_date, end_date])
 
         return queryset
+
+    def post(self, request, *args, **kwargs):
+        order_id = request.POST.get('order_id')
+        new_status = request.POST.get('status')
+        order = Order.objects.get(id=order_id)
+        if new_status in dict(Order.STATUS_CHOICES):
+            order.status = new_status
+            order.save()
+        return redirect('adminApp:order_list')
     
 
 @user_passes_test(admin_required)
