@@ -15,10 +15,14 @@ urlpatterns = [
     path('categories/<int:pk>/delete/', views.CategoryDeleteView.as_view(), name='category_delete'),
     
     # Productos
-    #path('products/', views.ProductListView.as_view(), name='product_list'),
-    #path('products/create/', views.ProductCreateView.as_view(), name='product_create'),
-    #path('products/<int:pk>/update/', views.ProductUpdateView.as_view(), name='product_update'),
-    #path('products/<int:pk>/delete/', views.ProductDeleteView.as_view(), name='product_delete'),
+    path('products/', views.ProductListView.as_view(), name='product_list'),
+    path('products/create/', views.ProductCreateView.as_view(), name='product_create'),
+    path('products/<int:pk>/update/', views.ProductUpdateView.as_view(), name='product_update'),
+    path('products/<int:pk>/delete/', views.ProductDeleteView.as_view(), name='product_delete'),
+
+    # Reviews
+    path('reviews/', views.ReviewRatingListView.as_view(), name='reviewrating_list'),
+    path('reviews/<int:pk>/delete/', views.ReviewRatingDeleteView.as_view(), name='reviewrating_delete'),
     
     # Inventario
     #path('inventory/', views.InventoryListView.as_view(), name='inventory_list'),

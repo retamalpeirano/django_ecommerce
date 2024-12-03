@@ -3,6 +3,7 @@ from django.views.generic import TemplateView, ListView, CreateView, UpdateView,
 from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
 from category.models import Category
+from store.models import Product, ReviewRating
 
 # Restricción para usuarios administradores
 def admin_required(user):
@@ -17,6 +18,10 @@ class DashboardView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['category_count'] = Category.objects.count()
         return context
+
+"""
+    CATEGORÍAS
+"""
 
 # Listar Categorías
 @method_decorator(user_passes_test(admin_required), name='dispatch')
@@ -47,3 +52,56 @@ class CategoryDeleteView(DeleteView):
     model = Category
     template_name = "adminApp/category_confirm_delete.html"
     success_url = reverse_lazy('adminApp:category_list')
+
+"""
+    PRODUCTOS Y REVIEWS
+"""
+
+# Listar Productos
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class ProductListView(ListView):
+    model = Product
+    template_name = "adminApp/product_list.html"
+    context_object_name = "products"
+
+# Crear Productos
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class ProductCreateView(CreateView):
+    model = Product
+    fields = ['product_name', 'slug', 'description', 'price', 'images', 'is_available', 'category']
+    template_name = "adminApp/product_form.html"
+    success_url = reverse_lazy('adminApp:product_list')
+
+# Actualizar Productos
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class ProductUpdateView(UpdateView):
+    model = Product
+    fields = ['product_name', 'slug', 'description', 'price', 'images', 'is_available', 'category']
+    template_name = "adminApp/product_form.html"
+    success_url = reverse_lazy('adminApp:product_list')
+
+# Eliminar Productos
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class ProductDeleteView(DeleteView):
+    model = Product
+    template_name = "adminApp/product_confirm_delete.html"
+    success_url = reverse_lazy('adminApp:product_list')
+
+
+# Listar Reviews
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class ReviewRatingListView(ListView):
+    model = ReviewRating
+    template_name = "adminApp/reviewrating_list.html"
+    context_object_name = "reviews"
+
+# Eliminar Reviews
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class ReviewRatingDeleteView(DeleteView):
+    model = ReviewRating
+    template_name = "adminApp/reviewrating_confirm_delete.html"
+    success_url = reverse_lazy('adminApp:reviewrating_list')
+    
+"""
+    INVENTARIO
+"""

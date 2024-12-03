@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Listado de Productos</h1>
+<a href="{% url 'adminApp:product_create' %}" class="btn btn-primary">Crear Nuevo Producto</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Categoría</th>
+            <th>Disponible</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.product_name }}</td>
+            <td>{{ product.price }}</td>
+            <td>{{ product.category.category_name }}</td>
+            <td>{{ product.is_available|yesno:"Sí,No" }}</td>
+            <td>
+                <a href="{% url 'adminApp:product_update' product.id %}">Editar</a>
+                <a href="{% url 'adminApp:product_delete' product.id %}">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
