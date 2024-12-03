@@ -25,5 +25,7 @@ urlpatterns = [
     path('reviews/<int:pk>/delete/', views.ReviewRatingDeleteView.as_view(), name='reviewrating_delete'),
     
     # Inventario
-    #path('inventory/', views.InventoryListView.as_view(), name='inventory_list'),
+    path('inventory/', views.InventoryListView.as_view(), name='inventory_list'),
+    path('inventory/create/', views.InventoryCreateView.as_view(), name='inventory_create'),
+    path('inventory/<int:pk>/update/', views.InventoryUpdateView.as_view(), name='inventory_update'),
 ]

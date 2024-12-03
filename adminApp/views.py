@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
 from category.models import Category
 from store.models import Product, ReviewRating
+from inventory.models import Inventory, StockMovement
 
 # Restricción para usuarios administradores
 def admin_required(user):
@@ -105,3 +106,60 @@ class ReviewRatingDeleteView(DeleteView):
 """
     INVENTARIO
 """
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class InventoryListView(ListView):
+    model = Inventory
+    template_name = "adminApp/inventory_list.html"
+    context_object_name = "inventories"
+
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class InventoryCreateView(CreateView):
+    model = Inventory
+    fields = ['product', 'stock', 'stock_minimum']
+    template_name = "adminApp/inventory_form.html"
+    success_url = reverse_lazy('adminApp:inventory_list')
+
+    def form_valid(self, form):
+        # Registrar movimiento al crear un inventario
+        response = super().form_valid(form)
+        StockMovement.register_movement(
+            inventory=self.object,
+            movement_type='entrada',
+            quantity=self.object.stock
+        )
+        return response
+
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class InventoryUpdateView(UpdateView):
+    model = Inventory
+    fields = ['product', 'stock', 'stock_minimum']
+    template_name = "adminApp/inventory_form.html"
+    success_url = reverse_lazy('adminApp:inventory_list')
+
+    def form_valid(self, form):
+        # Registrar movimiento al actualizar el inventario
+        inventory = self.get_object()
+        new_stock = form.cleaned_data['stock']
+        movement_type = 'entrada' if new_stock > inventory.stock else 'salida'
+        quantity = abs(new_stock - inventory.stock)
+        StockMovement.register_movement(
+            inventory=inventory,
+            movement_type=movement_type,
+            quantity=quantity
+        )
+        return super().form_valid(form)
+
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class InventoryDeleteView(DeleteView):
+    model = Inventory
+    template_name = "adminApp/inventory_confirm_delete.html"
+    success_url = reverse_lazy('adminApp:inventory_list')
+
+    def delete(self, request, *args, **kwargs):
+        inventory = self.get_object()
+        StockMovement.register_movement(
+            inventory=inventory,
+            movement_type='salida',
+            quantity=inventory.stock
+        )
+        return super().delete(request, *args, **kwargs)
