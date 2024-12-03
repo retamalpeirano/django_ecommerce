@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from cart.views import cart_page  # Importa la vista desde la aplicación "cart"
 
 urlpatterns = [
     path('', views.store, name="store"),  # Página principal de la tienda
@@ -8,4 +9,5 @@ urlpatterns = [
     path('search/', views.search, name='search'),  # Búsqueda
     path('submit_review/<int:product_id>/', views.submit_review, name='submit_review'),  # Reviews
     path('add_cart/<int:product_id>/', views.add_cart, name='add_cart'),  # Agregar al carrito
+    path('cart/', cart_page, name='cart'),  # Página del carrito
 ]

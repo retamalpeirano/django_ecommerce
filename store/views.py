@@ -9,6 +9,7 @@ from inventory.models import Inventory
 from django.db.models import Q
 from .forms import ReviewForm
 from django.contrib import messages
+from cart.models import get_or_create_cart, add_to_cart, CartError, StockError
 
 
 def store(request, category_slug=None):
@@ -17,7 +18,7 @@ def store(request, category_slug=None):
     Adicionalmente permite filtrar por rango de precios.
     """
     categories = None
-    products = Product.objects.filter(is_available=True).order_by('product_name')  # Ordenar por nombre del producto # Inicializamos los productos disponibles
+    products = Product.objects.filter(is_available=True).order_by('product_name')  # Ordenar por nombre del producto
 
     # Filtrar por categoría si se pasa en la URL
     if category_slug:
@@ -58,16 +59,12 @@ def product_detail(request, category_slug, product_slug):
 
     reviews = ReviewRating.objects.filter(product=single_product, status=True)
 
-    # Validar si hay stock disponible
-    #is_in_stock = inventory and inventory.stock > 0
-
     # Obtener promedio y conteo de reseñas
     average_review, count_review = single_product.average_and_count_review()
 
     context = {
         'single_product': single_product,
         'inventory': inventory,
-        #'is_in_stock': is_in_stock,
         'reviews': reviews,
         'review_form': ReviewForm(),
         'average_review': average_review,
@@ -115,6 +112,29 @@ def submit_review(request, product_id):
 
 
 def add_cart(request, product_id):
-    # Aquí va la lógica para agregar el producto al carrito.
-    # Como ejemplo básico, redirigiremos a la tienda.
-    return redirect('store')
+    """
+    Agrega un producto al carrito, gestionando usuarios autenticados y sesiones anónimas.
+    """
+    product = get_object_or_404(Product, id=product_id)
+
+    # Obtener o crear el carrito (basado en usuario o sesión)
+    cart = get_or_create_cart(request)
+
+    # Obtener la cantidad desde el formulario
+    try:
+        quantity = int(request.POST.get('quantity', 1))
+    except ValueError:
+        messages.error(request, "Cantidad inválida.")
+        return redirect(product.get_url())
+
+    try:
+        # Agregar producto al carrito
+        add_to_cart(cart, product, quantity)
+        messages.success(request, f"¡'{product.product_name}' ha sido agregado al carrito!")
+    except StockError:
+        messages.error(request, "No hay suficiente stock para este producto.")
+    except CartError as e:
+        messages.error(request, str(e))
+
+    # Redirigir al detalle del producto
+    return redirect(product.get_url())

@@ -62,8 +62,10 @@
                 {% endif %}
         
             </article> <!-- product-info-aside .// -->
-        </form>
-        
+          </form>
+          
+          <!-- Espacio para mostrar mensajes de error o confirmación -->
+          {% include 'includes/alerts.html' %}
 
         </main> <!-- col.// -->
       </div> <!-- row.// -->
@@ -74,7 +76,7 @@
 
     <div class="row">
       <div class="col-md-9">
-
+        <!-- Formulario para comentarios y reseñas -->
         <form action="{% url 'submit_review' single_product.id %}" method="post">
           {% csrf_token %}
           <h5>Escribe tu reseña o comentario</h5>
@@ -106,25 +108,17 @@
             <textarea name="review" rows="4" class="form-control" placeholder="Escribe aquí tu reseña"></textarea>
             <br>
             {% if user.is_authenticated %}
-
-            <!--{% if orderproduct %}-->
-              <!-- esto no se está viendo !!!!!!!! AQUIIIIIIII -->
               <input type="submit" name="" value="Enviar reseña" class="btn btn-primary">
-            <!--{% else %}
-              <p>Primero necesitas comprar el producto para escribir una reseña!</p>
-            {% endif %}-->
-
             {% else %}
-              <p>Para enviar un comentario debes estar registrado <span><a href="{% url 'login' %}">Inicia Sesión</a></span></p>
+              <p>Para enviar un comentario debes estar registrado <span><a href="{% url 'account_login' %}">Inicia Sesión</a></span></p>
             {% endif %}
           </div>
 
           {% include 'includes/alerts.html' %}
-
-
         </form>
         <br>
 
+        <!-- Lista de reseñas -->
         <header class="section-heading">
           <h3>Reseñas de compradores verificados</h3>
           <div class="rating-star">
@@ -164,13 +158,9 @@
         </article>
         {% endfor %}
 
-
-
       </div> <!-- col.// -->
     </div> <!-- row.// -->
-
 
   </div> <!-- container .//  -->
 </section>
 {% endblock %}
-<!-- ========================= SECTION CONTENT END// ========================= -->
