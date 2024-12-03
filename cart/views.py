@@ -1,12 +1,15 @@
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_http_methods
 from .models import get_or_create_cart, add_to_cart, update_cart_item, remove_from_cart, CartItem
 from store.models import Product
 
+
 @require_http_methods(["GET"])
 def view_cart(request):
-    """Devuelve el contenido del carrito actual."""
+    """
+    Devuelve el contenido del carrito actual como JSON.
+    """
     cart = get_or_create_cart(request)
     items = [
         {
@@ -26,48 +29,60 @@ def view_cart(request):
 
 @require_http_methods(["POST"])
 def add_product_to_cart(request, product_id):
-    """Agrega un producto al carrito."""
+    """
+    Agrega un producto al carrito y redirige al carrito o al producto con un mensaje.
+    """
     product = get_object_or_404(Product, id=product_id)
     cart = get_or_create_cart(request)
 
     try:
         quantity = int(request.POST.get("quantity", 1))
-        cart_item = add_to_cart(cart, product, quantity)
-        return JsonResponse({
-            "message": "Producto agregado exitosamente.",
-            "product_name": cart_item.product.product_name,
-            "quantity": cart_item.quantity,
-            "subtotal": cart_item.subtotal(),
-        })
+        add_to_cart(cart, product, quantity)
+        return redirect('cart_page')  # Redirige a la página del carrito
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
 
 
-@require_http_methods(["PUT", "PATCH"])
+@require_http_methods(["POST", "PATCH"])
 def update_cart_item_view(request, cart_item_id):
-    """Actualiza la cantidad de un ítem en el carrito."""
+    """
+    Actualiza la cantidad de un ítem en el carrito.
+    """
     cart_item = get_object_or_404(CartItem, id=cart_item_id)
 
     try:
         quantity = int(request.POST.get("quantity", 0))
         update_cart_item(cart_item, quantity)
-        return JsonResponse({
-            "message": "Cantidad actualizada correctamente.",
-            "product_name": cart_item.product.product_name,
-            "quantity": cart_item.quantity,
-            "subtotal": cart_item.subtotal(),
-        })
+        # Redirige de vuelta a la página del carrito
+        return redirect('cart_page')
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
 
 
-@require_http_methods(["DELETE"])
+@require_http_methods(["POST"])
 def delete_cart_item_view(request, cart_item_id):
-    """Elimina un ítem del carrito."""
+    """
+    Elimina un ítem del carrito y redirige a la página del carrito.
+    """
     cart_item = get_object_or_404(CartItem, id=cart_item_id)
 
     try:
         remove_from_cart(cart_item)
-        return JsonResponse({"message": "Producto eliminado del carrito."})
+        return redirect('cart_page')  # Redirige de vuelta al carrito
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+
+
+@require_http_methods(["GET"])
+def cart_page(request):
+    """
+    Renderiza una página HTML con el contenido del carrito.
+    """
+    cart = get_or_create_cart(request)
+    cart_items = cart.cartitems.all()
+    total = cart.total_cost()
+    context = {
+        'cart_items': cart_items,
+        'total': total,
+    }
+    return render(request, 'store/cart.html', context)
