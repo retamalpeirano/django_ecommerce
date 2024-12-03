@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Dashboard Administrativo</h1>
+<ul>
+    <li><a href="{% url 'adminApp:category_list' %}">Gestionar Categorías</a></li>
+</ul>
+<div>
+    <p>Total Categorías: {{ category_count }}</p>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{% if object %}Editar Categoría{% else %}Crear Nueva Categoría{% endif %}</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">{% if object %}Actualizar{% else %}Crear{% endif %}</button>
+    <a href="{% url 'adminApp:category_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}
