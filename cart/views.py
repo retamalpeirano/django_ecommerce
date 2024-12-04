@@ -1,8 +1,9 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_http_methods
-from .models import get_or_create_cart, add_to_cart, update_cart_item, remove_from_cart, CartItem
+from .models import get_or_create_cart, add_to_cart, update_cart_item, remove_from_cart, CartItem, CartError, StockError
 from store.models import Product
+from django.contrib import messages
 
 
 @require_http_methods(["GET"])
@@ -30,17 +31,26 @@ def view_cart(request):
 @require_http_methods(["POST"])
 def add_product_to_cart(request, product_id):
     """
-    Agrega un producto al carrito y redirige al carrito o al producto con un mensaje.
+    Agrega un producto al carrito.
     """
     product = get_object_or_404(Product, id=product_id)
     cart = get_or_create_cart(request)
 
     try:
-        quantity = int(request.POST.get("quantity", 1))
+        quantity = int(request.POST.get('quantity', 1))
+    except ValueError:
+        messages.error(request, "Cantidad inválida.")
+        return redirect(product.get_url())
+
+    try:
         add_to_cart(cart, product, quantity)
-        return redirect('cart_page')  # Redirige a la página del carrito
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=400)
+        messages.success(request, f"¡'{product.product_name}' ha sido agregado al carrito!")
+    except StockError:
+        messages.error(request, "No hay suficiente stock para este producto.")
+    except CartError as e:
+        messages.error(request, str(e))
+
+    return redirect(product.get_url())
 
 
 @require_http_methods(["POST", "PATCH"])

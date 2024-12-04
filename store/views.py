@@ -110,31 +110,3 @@ def submit_review(request, product_id):
             
     return redirect(url)
 
-
-def add_cart(request, product_id):
-    """
-    Agrega un producto al carrito, gestionando usuarios autenticados y sesiones anónimas.
-    """
-    product = get_object_or_404(Product, id=product_id)
-
-    # Obtener o crear el carrito (basado en usuario o sesión)
-    cart = get_or_create_cart(request)
-
-    # Obtener la cantidad desde el formulario
-    try:
-        quantity = int(request.POST.get('quantity', 1))
-    except ValueError:
-        messages.error(request, "Cantidad inválida.")
-        return redirect(product.get_url())
-
-    try:
-        # Agregar producto al carrito
-        add_to_cart(cart, product, quantity)
-        messages.success(request, f"¡'{product.product_name}' ha sido agregado al carrito!")
-    except StockError:
-        messages.error(request, "No hay suficiente stock para este producto.")
-    except CartError as e:
-        messages.error(request, str(e))
-
-    # Redirigir al detalle del producto
-    return redirect(product.get_url())
