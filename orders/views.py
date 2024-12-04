@@ -60,8 +60,8 @@ def create_order(request):
         return JsonResponse({"error": "Ya existe una orden pendiente para este carrito."}, status=400)
 
     try:
-        # Crear la orden usando el método del modelo Order
-        order = Order.create_from_cart(cart, user=user, session=cart.session)
+        # Crear la orden ¡Con estado 'completed' en Desarrollo!
+        order = Order.create_from_cart(cart, user=user, session=cart.session, status='completed')
         return JsonResponse({
             "message": "Orden creada exitosamente.",
             "order_id": order.id,

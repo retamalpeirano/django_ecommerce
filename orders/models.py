@@ -29,7 +29,7 @@ class Order(models.Model):
         return f"Pedido {self.id} - Estado: {self.get_status_display()}"
     
     @classmethod
-    def create_from_cart(cls, cart, user=None, session=None):
+    def create_from_cart(cls, cart, user=None, status='completed'):
         """Crea una orden a partir de un carrito."""
         if not cart.cartitems.exists():
             raise ValueError("El carrito está vacío y no se puede crear una orden.")
@@ -39,7 +39,7 @@ class Order(models.Model):
                 user=user,
                 session=session,
                 total_price=cart.total_cost(),
-                status='pending'
+                status=status
             )
 
             for cart_item in cart.cartitems.all():
@@ -69,10 +69,7 @@ class Order(models.Model):
 
             # Vaciar el carrito
             cart.cartitems.all().delete()
-
-        # Registrar en el log que la orden fue creada con éxito
-        logger = logging.getLogger(__name__)
-        logger.info(f"Orden {order.id} creada exitosamente para el usuario {user.id if user else 'anónimo'}.")
+            cart.delete() 
 
         return order
 
