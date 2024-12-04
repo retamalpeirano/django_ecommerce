@@ -10,9 +10,9 @@
         <li><a href="{% url 'adminApp:inventory_list' %}">Gestionar Inventarios de Productos</a></li>
         <li><a href="{% url 'adminApp:account_list' %}">Gestionar Cuentas de Usuario</a></li>
     </ul>
-</div>
-<div>
-    <p>Total Categorías: {{ category_count }}</p>
+    <div>
+        <p>Total Categorías: {{ category_count }}</p>
+    </div>
 </div>
 {% if low_stock_alerts %}
 <div class="alert alert-warning" role="alert">
