@@ -24,6 +24,7 @@ class Order(models.Model):
     status = models.CharField(_("Estado del Pedido"), max_length=10, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(_("Fecha de Creación"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Última Actualización"), auto_now=True)
+    description = models.TextField(max_length=500, blank=True)
 
     def __str__(self):
         return f"Pedido {self.id} - Estado: {self.get_status_display()}"
@@ -68,8 +69,8 @@ class Order(models.Model):
                 )
 
             # Vaciar el carrito
-            cart.cartitems.all().delete()
-            cart.delete() 
+        cart.cartitems.all().delete()
+        cart.delete() 
 
         return order
 

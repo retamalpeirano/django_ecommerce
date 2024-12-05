@@ -61,7 +61,7 @@ def create_order(request):
 
     try:
         # Crear la orden ¡Con estado 'completed' en Desarrollo!
-        order = Order.create_from_cart(cart, user=user, session=cart.session, status='completed')
+        order = Order.create_from_cart(cart, user=user, session=cart.session)
         return JsonResponse({
             "message": "Orden creada exitosamente.",
             "order_id": order.id,
