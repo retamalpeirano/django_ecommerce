@@ -4,9 +4,9 @@ from .models import Order, OrderItem
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'session', 'total_price', 'status', 'created_at', 'updated_at')
+    list_display = ('id', 'user', 'total_price', 'status', 'created_at', 'updated_at')
     list_filter = ('status', 'created_at', 'updated_at')
-    search_fields = ('user__email', 'session__session_key')
+    search_fields = ('user__email', 'user__username')
     readonly_fields = ('created_at', 'updated_at')
 
     def total_price(self, obj):

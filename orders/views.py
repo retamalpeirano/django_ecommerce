@@ -27,11 +27,7 @@ def checkout(request):
                 'last_name': user.last_name,
                 'email': user.email,
                 'phone': profile.phone_number if profile else '',
-                'address_line_1': profile.address.get('line1', '') if profile and profile.address else '',
-                'address_line_2': profile.address.get('line2', '') if profile and profile.address else '',
-                'city': profile.address.get('city', '') if profile and profile.address else '',
-                'state': profile.address.get('state', '') if profile and profile.address else '',
-                'country': profile.address.get('country', '') if profile and profile.address else '',
+                'address': profile.address if profile else '',
                 'rut': profile.rut if profile else '',
             }
         else:
@@ -150,4 +146,4 @@ def order_success(request, order_id):
     context = {
         'order_id': order_id
     }
-    return render(request, 'store/order_success.html', context)
+    return render(request, 'orders/order_complete.html', context)

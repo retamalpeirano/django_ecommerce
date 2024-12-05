@@ -22,6 +22,11 @@
                                     value="{{ initial_data.last_name|default:'' }}" required>
                             </div>
                             <div class="form-group">
+                                <label for="rut">RUT</label>
+                                <input type="text" name="rut" class="form-control" 
+                                    value="{{ initial_data.rut|default:'' }}" required>
+                            </div>
+                            <div class="form-group">
                                 <label for="phone">Teléfono</label>
                                 <input type="text" name="phone" class="form-control" 
                                     value="{{ initial_data.phone|default:'' }}" required>
@@ -31,9 +36,9 @@
                                 <textarea name="address" rows="3" class="form-control" required>{{ initial_data.address|default:'' }}</textarea>
                             </div>
                             <div class="form-group">
-                                <label for="rut">RUT</label>
-                                <input type="text" name="rut" class="form-control" 
-                                    value="{{ initial_data.rut|default:'' }}" required>
+                                <label for="email">Email</label>
+                                <input type="text" name="email" class="form-control" 
+                                    value="{{ initial_data.email|default:'' }}" required>
                             </div>
                     </div>
                 </div>
