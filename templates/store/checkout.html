@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title mb-4">Información del Comprador</h4>
-                        <form action="{% url 'place_order' %}" method="post">
+                        <form action="{% url 'checkout' %}" method="post">
                             {% csrf_token %}
                             <div class="form-group">
                                 <label for="first_name">Nombre(s)</label>
