@@ -38,7 +38,6 @@ class Order(models.Model):
         with transaction.atomic():
             order = cls.objects.create(
                 user=user,
-                session=session,
                 total_price=cart.total_cost(),
                 status=status
             )
