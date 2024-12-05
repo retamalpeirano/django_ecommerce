@@ -8,8 +8,6 @@ from cart.models import get_or_create_cart
 from .models import Order
 
 
-
-
 @transaction.atomic
 @require_http_methods(["GET", "POST"])
 def checkout(request):
