@@ -5,9 +5,21 @@ from django.utils.formats import localize
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
-    extra = 0
+    extra = 0  # No se crean formularios vacíos por defecto
     readonly_fields = ('subtotal',)
     fields = ('product', 'quantity', 'price', 'subtotal')
+
+    def subtotal(self, obj):
+        """
+        Calcula el subtotal, devolviendo 0 si los valores son nulos.
+        """
+        try:
+            if obj and obj.price is not None and obj.quantity is not None:
+                return localize(obj.price * obj.quantity)
+        except (TypeError, AttributeError):
+            pass
+        return localize(0)  # Devuelve 0 si hay un error o valores no definidos
+    subtotal.short_description = "Subtotal"
 
 
 @admin.register(Order)
@@ -21,10 +33,16 @@ class OrderAdmin(admin.ModelAdmin):
     actions = ['mark_as_confirmed', 'mark_as_canceled']
 
     def item_count(self, obj):
+        """
+        Cuenta los ítems asociados a la orden.
+        """
         return obj.items.count()
     item_count.short_description = "Número de Ítems"
 
     def total_price(self, obj):
+        """
+        Devuelve el precio total de la orden formateado.
+        """
         return localize(obj.total_price)
     total_price.short_description = "Precio Total"
 
@@ -46,5 +64,13 @@ class OrderItemAdmin(admin.ModelAdmin):
     list_per_page = 50
 
     def subtotal(self, obj):
-        return localize(obj.subtotal())
+        """
+        Calcula el subtotal, devolviendo 0 si los valores son nulos.
+        """
+        try:
+            if obj and obj.price is not None and obj.quantity is not None:
+                return localize(obj.price * obj.quantity)
+        except (TypeError, AttributeError):
+            pass
+        return localize(0)  # Devuelve 0 si hay un error o valores no definidos
     subtotal.short_description = "Subtotal"
