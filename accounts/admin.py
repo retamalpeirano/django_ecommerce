@@ -46,14 +46,9 @@ class AccountAdmin(admin.ModelAdmin):
 
 # Admin configuration for UserProfile
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'rut', 'phone_number', 'get_full_address')
-    search_fields = ('user__email', 'rut', 'phone_number')
+    list_display = ('user', 'rut', 'phone_number', 'address')
+    search_fields = ('user__email', 'rut', 'phone_number', 'address')
     ordering = ('user__email',)
-
-    def get_full_address(self, obj):
-        address = obj.get_full_address()
-        return address if address.strip() else _("Dirección no especificada")
-    get_full_address.short_description = _("Dirección completa")
 
 
 # Admin configuration for Session

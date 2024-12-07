@@ -49,6 +49,3 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.email
 
-    def get_full_address(self):
-        address = self.address or {}
-        return f"{address.get('line1', '')}, {address.get('line2', '')}, {address.get('city', '')}, {address.get('state', '')}, {address.get('country', '')}"
