@@ -1,43 +1,43 @@
 from django.contrib import admin
 from .models import Account, UserProfile
 from django.contrib.sessions.models import Session
+from django.utils.translation import gettext_lazy as _
 
 
 # Admin configuration for Account
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
     can_delete = False
-    verbose_name_plural = 'User Profiles'
-    fk_name = 'user'
+    verbose_name_plural = _("Perfiles de Usuario")
+    fk_name = "user"
 
 
 class AccountAdmin(admin.ModelAdmin):
-    list_display = ('email', 'username', 'first_name', 'last_name', 'is_active', 'is_staff', 'is_superuser')
-    list_filter = ('is_active', 'is_staff', 'is_superuser', 'date_joined')
+    list_display = ('email', 'username', 'first_name', 'last_name', 'is_active', 'is_staff', 'is_superuser', 'date_joined')
+    list_filter = ('is_active', 'is_staff', 'is_superuser', 'is_customer', 'date_joined')
     search_fields = ('email', 'username', 'first_name', 'last_name')
     ordering = ('-date_joined',)
     readonly_fields = ('date_joined', 'last_login')
 
     fieldsets = (
-        ('Personal Info', {
+        (_("Información Personal"), {
             'fields': ('email', 'username', 'first_name', 'last_name')
         }),
-        ('Permissions', {
+        (_("Permisos"), {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'is_customer')
         }),
-        ('Important Dates', {
+        (_("Fechas Importantes"), {
             'fields': ('date_joined', 'last_login')
         }),
     )
 
-    inlines = [UserProfileInline]  # Añade el perfil de usuario como inline
+    inlines = [UserProfileInline]
 
     def get_fieldsets(self, request, obj=None):
-        """Devuelve fieldsets apropiados según si el objeto existe o no"""
-        if obj:  # Editando un usuario existente
+        if obj:
             return self.fieldsets
         return (
-            ('Personal Info', {
+            (_("Información Personal"), {
                 'classes': ('wide',),
                 'fields': ('email', 'username', 'first_name', 'last_name', 'password1', 'password2'),
             }),
@@ -46,16 +46,17 @@ class AccountAdmin(admin.ModelAdmin):
 
 # Admin configuration for UserProfile
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'phone_number', 'get_full_address', 'rut')
-    search_fields = ('user__email', 'phone_number', 'rut')
+    list_display = ('user', 'rut', 'phone_number', 'get_full_address')
+    search_fields = ('user__email', 'rut', 'phone_number')
     ordering = ('user__email',)
 
     def get_full_address(self, obj):
-        return obj.get_full_address()
-    get_full_address.short_description = 'Full Address'
+        address = obj.get_full_address()
+        return address if address.strip() else _("Dirección no especificada")
+    get_full_address.short_description = _("Dirección completa")
 
 
-## SESSIONS ##
+# Admin configuration for Session
 @admin.register(Session)
 class SessionAdmin(admin.ModelAdmin):
     list_display = ('session_key', 'user', 'expire_date')
@@ -63,20 +64,20 @@ class SessionAdmin(admin.ModelAdmin):
     search_fields = ('session_key',)
 
     def user(self, obj):
-        # Intenta extraer el usuario de los datos de la sesión
-        from django.contrib.sessions.backends.db import SessionStore
-        session_data = SessionStore(session_key=obj.session_key).load()
-        user_id = session_data.get('_auth_user_id')
-        if user_id:
-            from accounts.models import Account
-            try:
-                user = Account.objects.get(id=user_id)
-                return user.email
-            except Account.DoesNotExist:
-                return "Usuario eliminado"
-        return "Usuario no autenticado"
+        """
+        Devuelve el email del usuario asociado a la sesión, si existe.
+        """
+        try:
+            from django.contrib.sessions.backends.db import SessionStore
+            session_data = SessionStore(session_key=obj.session_key).load()
+            user_id = session_data.get('_auth_user_id')
+            if user_id:
+                from accounts.models import Account
+                return Account.objects.filter(id=user_id).values_list('email', flat=True).first() or _("Usuario eliminado")
+        except Exception:
+            return _("Usuario no autenticado")
 
 
-# Registering models with admin
+# Register models with the admin
 admin.site.register(Account, AccountAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
