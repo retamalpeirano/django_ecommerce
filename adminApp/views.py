@@ -202,6 +202,7 @@ class OrderListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        queryset = queryset.order_by('-created_at')
         # Filtrar por usuario
         user_filter = self.request.GET.get('user')
         if user_filter:
