@@ -133,6 +133,7 @@ class InventoryListView(ListView):
     template_name = "adminApp/inventory_list.html"
     context_object_name = "inventories"
 
+
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class InventoryCreateView(CreateView):
     model = Inventory
@@ -149,6 +150,7 @@ class InventoryCreateView(CreateView):
             quantity=self.object.stock
         )
         return response
+
 
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class InventoryUpdateView(UpdateView):
@@ -169,6 +171,7 @@ class InventoryUpdateView(UpdateView):
             quantity=quantity
         )
         return super().form_valid(form)
+
 
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class InventoryDeleteView(DeleteView):
