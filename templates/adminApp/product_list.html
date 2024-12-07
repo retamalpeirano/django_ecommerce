@@ -2,7 +2,10 @@
 
 {% block content %}
 <h1>Listado de Productos</h1>
-<a href="{% url 'adminApp:product_create' %}" class="btn btn-primary">Crear Nuevo Producto</a>
+<div class="mb-3">
+    <a href="{% url 'adminApp:product_create' %}" class="btn btn-primary">Crear Nuevo Producto</a>
+    <a href="{% url 'adminApp:export_products_csv' %}" class="btn btn-success">Exportar a CSV</a>
+</div>
 <table class="table">
     <thead>
         <tr>
@@ -21,8 +24,8 @@
             <td>{{ product.category.category_name }}</td>
             <td>{{ product.is_available|yesno:"Sí,No" }}</td>
             <td>
-                <a href="{% url 'adminApp:product_update' product.id %}">Editar</a>
-                <a href="{% url 'adminApp:product_delete' product.id %}">Eliminar</a>
+                <a href="{% url 'adminApp:product_update' product.id %}" class="btn btn-sm btn-warning">Editar</a>
+                <a href="{% url 'adminApp:product_delete' product.id %}" class="btn btn-sm btn-danger">Eliminar</a>
             </td>
         </tr>
         {% endfor %}

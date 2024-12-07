@@ -81,6 +81,33 @@ class ProductListView(ListView):
     context_object_name = "products"
 
 
+@user_passes_test(admin_required)
+def export_products_csv(request):
+    # Consulta de productos
+    queryset = Product.objects.all()
+
+    # Crear respuesta HTTP con el tipo de contenido CSV
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="products.csv"'
+
+    # Crear escritor CSV
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'Nombre', 'Precio', 'Categoría', 'Disponible', 'Fecha de Creación', 'Última Modificación'])
+
+    for product in queryset:
+        writer.writerow([
+            product.id,
+            product.product_name,
+            product.price,
+            product.category.category_name,
+            'Sí' if product.is_available else 'No',
+            product.created_date,
+            product.modified_date,
+        ])
+
+    return response
+
+
 # Crear Productos
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class ProductCreateView(CreateView):
