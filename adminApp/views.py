@@ -16,6 +16,7 @@ import csv
 def admin_required(user):
     return user.is_authenticated and user.is_staff
 
+
 # Vista del dashboard
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class DashboardView(TemplateView):
@@ -29,6 +30,7 @@ class DashboardView(TemplateView):
         ]
         return context
 
+
 """
     CATEGORÍAS
 """
@@ -40,6 +42,7 @@ class CategoryListView(ListView):
     template_name = "adminApp/category_list.html"
     context_object_name = "categories"
 
+
 # Crear Categoría
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class CategoryCreateView(CreateView):
@@ -47,6 +50,7 @@ class CategoryCreateView(CreateView):
     fields = ['category_name', 'description']
     template_name = "adminApp/category_form.html"
     success_url = reverse_lazy('adminApp:category_list')
+
 
 # Actualizar Categoría
 @method_decorator(user_passes_test(admin_required), name='dispatch')
@@ -56,12 +60,14 @@ class CategoryUpdateView(UpdateView):
     template_name = "adminApp/category_form.html"
     success_url = reverse_lazy('adminApp:category_list')
 
+
 # Eliminar Categoría
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class CategoryDeleteView(DeleteView):
     model = Category
     template_name = "adminApp/category_confirm_delete.html"
     success_url = reverse_lazy('adminApp:category_list')
+
 
 """
     PRODUCTOS Y REVIEWS
@@ -74,6 +80,7 @@ class ProductListView(ListView):
     template_name = "adminApp/product_list.html"
     context_object_name = "products"
 
+
 # Crear Productos
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class ProductCreateView(CreateView):
@@ -82,6 +89,7 @@ class ProductCreateView(CreateView):
     template_name = "adminApp/product_form.html"
     success_url = reverse_lazy('adminApp:product_list')
 
+
 # Actualizar Productos
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class ProductUpdateView(UpdateView):
@@ -89,6 +97,7 @@ class ProductUpdateView(UpdateView):
     fields = ['product_name', 'slug', 'description', 'price', 'images', 'is_available', 'category']
     template_name = "adminApp/product_form.html"
     success_url = reverse_lazy('adminApp:product_list')
+
 
 # Eliminar Productos
 @method_decorator(user_passes_test(admin_required), name='dispatch')
@@ -105,16 +114,19 @@ class ReviewRatingListView(ListView):
     template_name = "adminApp/reviewrating_list.html"
     context_object_name = "reviews"
 
+
 # Eliminar Reviews
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class ReviewRatingDeleteView(DeleteView):
     model = ReviewRating
     template_name = "adminApp/reviewrating_confirm_delete.html"
     success_url = reverse_lazy('adminApp:reviewrating_list')
-    
+
+
 """
     INVENTARIO
 """
+
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class InventoryListView(ListView):
     model = Inventory
@@ -177,7 +189,6 @@ class InventoryDeleteView(DeleteView):
 """
     ORDENES
 """
-
 
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class OrderListView(ListView):
@@ -255,7 +266,6 @@ def export_orders_csv(request):
     DETALLE ORDENES
 """
 
-
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class OrderItemListView(ListView):
     model = OrderItem
@@ -298,6 +308,7 @@ def export_order_items_csv(request, order_id):
 
     return response
 
+
 """ 
     CUENTAS Y PERFILES
 """
@@ -310,6 +321,7 @@ class AccountListView(ListView):
     context_object_name = "accounts"
     paginate_by = 10
 
+
 # Actualizar Cuentas
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class AccountUpdateView(UpdateView):
@@ -318,6 +330,7 @@ class AccountUpdateView(UpdateView):
     template_name = "adminApp/account_form.html"
     success_url = reverse_lazy('adminApp:account_list')
 
+
 # Listar Perfiles de Usuario
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class UserProfileListView(ListView):
@@ -325,6 +338,7 @@ class UserProfileListView(ListView):
     template_name = "adminApp/userprofile_list.html"
     context_object_name = "user_profiles"
     paginate_by = 10
+
 
 # Actualizar Perfiles de Usuario
 @method_decorator(user_passes_test(admin_required), name='dispatch')
