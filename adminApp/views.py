@@ -223,17 +223,21 @@ class OrderListView(ListView):
     def post(self, request, *args, **kwargs):
         order_id = request.POST.get('order_id')
         new_status = request.POST.get('status')
-        order = Order.objects.get(id=order_id)
-        if new_status in dict(Order.STATUS_CHOICES):
-            order.status = new_status
-            order.save()
+        if order_id and new_status in dict(Order.STATUS_CHOICES):
+            try:
+                order = Order.objects.get(id=order_id)
+                order.status = new_status
+                order.save()
+            except Order.DoesNotExist:
+                pass
         return redirect('adminApp:order_list')
-    
+
 
 @user_passes_test(admin_required)
 def export_orders_csv(request):
-    # Obtener todas las órdenes filtradas
     queryset = Order.objects.all()
+
+    # Filtrar según parámetros GET
     user_filter = request.GET.get('user')
     if user_filter:
         queryset = queryset.filter(user__id=user_filter)
@@ -245,21 +249,20 @@ def export_orders_csv(request):
     if start_date and end_date:
         queryset = queryset.filter(created_at__range=[start_date, end_date])
 
-    # Crear el archivo CSV
+    # Crear CSV
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="orders.csv"'
 
     writer = csv.writer(response)
     writer.writerow(['ID', 'Usuario', 'Estado', 'Precio Total', 'Fecha de Creación', 'Última Actualización'])
-
     for order in queryset:
         writer.writerow([
             order.id,
             order.user.email if order.user else "Anónimo",
             order.get_status_display(),
             order.total_price,
-            order.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-            order.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
+            order.created_at,
+            order.updated_at,
         ])
 
     return response
@@ -284,23 +287,21 @@ class OrderItemListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         order_id = self.kwargs.get('order_id')
-        context['order'] = Order.objects.get(id=order_id)
+        context['order'] = Order.objects.filter(id=order_id).first()
         return context
 
 
 @user_passes_test(admin_required)
 def export_order_items_csv(request, order_id):
-    # Obtener todos los ítems de una orden específica
-    order_items = OrderItem.objects.filter(order_id=order_id)
+    items = OrderItem.objects.filter(order_id=order_id)
 
-    # Crear el archivo CSV
+    # Crear CSV
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = f'attachment; filename="order_{order_id}_items.csv"'
 
     writer = csv.writer(response)
     writer.writerow(['ID Orden', 'Producto', 'Cantidad', 'Precio Unitario', 'Subtotal'])
-
-    for item in order_items:
+    for item in items:
         writer.writerow([
             item.order.id,
             item.product.product_name,
