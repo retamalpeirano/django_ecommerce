@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Movimientos de Inventario</h1>
+
+<!-- Formulario de filtros -->
+<form method="get" class="form-inline mb-4">
+    <select name="movement_type" class="form-control">
+        <option value="">Todos los tipos</option>
+        {% for value, display in movement_choices %}
+        <option value="{{ value }}" {% if request.GET.movement_type == value %}selected{% endif %}>{{ display }}</option>
+        {% endfor %}
+    </select>
+    <input type="date" name="start_date" class="form-control" value="{{ request.GET.start_date }}">
+    <input type="date" name="end_date" class="form-control" value="{{ request.GET.end_date }}">
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+    <a href="{% url 'adminApp:export_stock_movements_csv' %}" class="btn btn-success">Exportar a CSV</a>
+</form>
+
+<!-- Tabla de movimientos -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Producto</th>
+            <th>Tipo</th>
+            <th>Cantidad</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for movement in movements %}
+        <tr>
+            <td>{{ movement.id }}</td>
+            <td>{{ movement.inventory.product.product_name }}</td>
+            <td>{{ movement.get_movement_type_display }}</td>
+            <td>{{ movement.quantity }}</td>
+            <td>{{ movement.movement_date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Paginación -->
+<div class="pagination">
+    {% if movements.has_previous %}
+    <a href="?page={{ movements.previous_page_number }}&{{ request.GET.urlencode }}" class="btn btn-light">Anterior</a>
+    {% endif %}
+    <span>Página {{ movements.number }} de {{ movements.paginator.num_pages }}</span>
+    {% if movements.has_next %}
+    <a href="?page={{ movements.next_page_number }}&{{ request.GET.urlencode }}" class="btn btn-light">Siguiente</a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -241,6 +241,61 @@ class InventoryDeleteView(DeleteView):
     
 
 """
+    MOVIMIENTOS DE INVENTARIO
+"""
+
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class StockMovementListView(ListView):
+    model = StockMovement
+    template_name = "adminApp/stock_movement_list.html"
+    context_object_name = "movements"
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        # Filtrar por tipo de movimiento
+        movement_type = self.request.GET.get('movement_type')
+        if movement_type in dict(StockMovement.MOVEMENT_CHOICES):
+            queryset = queryset.filter(movement_type=movement_type)
+
+        # Filtrar por rango de fechas
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+        if start_date and end_date:
+            queryset = queryset.filter(movement_date__range=[start_date, end_date])
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['movement_choices'] = StockMovement.MOVEMENT_CHOICES
+        return context
+
+
+@user_passes_test(admin_required)
+def export_stock_movements_csv(request):
+    queryset = StockMovement.objects.select_related('inventory', 'inventory__product')
+
+    # Crear respuesta HTTP con tipo CSV
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="stock_movements.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['ID Movimiento', 'Producto', 'Tipo', 'Cantidad', 'Fecha'])
+
+    for movement in queryset:
+        writer.writerow([
+            movement.id,
+            movement.inventory.product.product_name,
+            movement.get_movement_type_display(),
+            movement.quantity,
+            movement.movement_date,
+        ])
+
+    return response
+
+
+"""
     ORDENES
 """
 
