@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import export_products_csv, export_inventory_csv, export_stock_movements_csv
+from .views import export_products_csv, export_inventory_csv, export_stock_movements_csv, StockMovementListView
 
 app_name = 'adminApp'
 
