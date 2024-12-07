@@ -437,6 +437,9 @@ class AccountListView(ListView):
     context_object_name = "accounts"
     paginate_by = 10
 
+    def get_queryset(self):
+        queryset = super().get_queryset().order_by('date_joined')
+        return queryset
 
 # Actualizar Cuentas
 @method_decorator(user_passes_test(admin_required), name='dispatch')
@@ -454,6 +457,10 @@ class UserProfileListView(ListView):
     template_name = "adminApp/userprofile_list.html"
     context_object_name = "user_profiles"
     paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset().order_by('user__email')
+        return queryset
 
 
 # Actualizar Perfiles de Usuario
