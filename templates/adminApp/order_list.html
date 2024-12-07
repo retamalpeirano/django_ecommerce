@@ -3,11 +3,12 @@
 {% block content %}
 <h1>Listado de Órdenes</h1>
 
+<!-- Formulario de filtros -->
 <form method="get" class="form-inline mb-4">
     <input type="text" name="user" class="form-control" placeholder="ID de Usuario" value="{{ request.GET.user }}">
     <select name="status" class="form-control">
         <option value="">Estado</option>
-        {% for value, display in model.STATUS_CHOICES %}
+        {% for value, display in status_choices %}
         <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ display }}</option>
         {% endfor %}
     </select>
@@ -17,6 +18,7 @@
     <a href="{% url 'adminApp:export_orders_csv' %}?{{ request.GET.urlencode }}" class="btn btn-success">Exportar a CSV</a>
 </form>
 
+<!-- Tabla de órdenes -->
 <table class="table">
     <thead>
         <tr>
@@ -35,11 +37,12 @@
             <td>{{ order.id }}</td>
             <td>{{ order.user.email|default_if_none:"Anónimo" }}</td>
             <td>
+                <!-- Formulario para actualizar el estado -->
                 <form method="post" action="">
                     {% csrf_token %}
                     <input type="hidden" name="order_id" value="{{ order.id }}">
                     <select name="status" class="form-select form-select-sm">
-                        {% for value, display in model.STATUS_CHOICES %}
+                        {% for value, display in status_choices %}
                         <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ display }}</option>
                         {% endfor %}
                     </select>
@@ -49,19 +52,20 @@
             <td>{{ order.total_price }}</td>
             <td>{{ order.created_at }}</td>
             <td>{{ order.updated_at }}</td>
-            <td><a href="{% url 'adminApp:order_items_list' order.id %}">Ver Productos</a></td>
+            <td><a href="{% url 'adminApp:order_items_list' order.id %}" class="btn btn-link">Ver Productos</a></td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
+<!-- Paginación -->
 <div class="pagination">
     {% if orders.has_previous %}
-    <a href="?{% querystring orders.previous_page_number %}" class="btn btn-light">Anterior</a>
+    <a href="?page={{ orders.previous_page_number }}&{{ request.GET.urlencode }}" class="btn btn-light">Anterior</a>
     {% endif %}
     <span>Página {{ orders.number }} de {{ orders.paginator.num_pages }}</span>
     {% if orders.has_next %}
-    <a href="?{% querystring orders.next_page_number %}" class="btn btn-light">Siguiente</a>
+    <a href="?page={{ orders.next_page_number }}&{{ request.GET.urlencode }}" class="btn btn-light">Siguiente</a>
     {% endif %}
 </div>
 {% endblock %}
