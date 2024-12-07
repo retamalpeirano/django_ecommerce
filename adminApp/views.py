@@ -438,7 +438,7 @@ class AccountListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        queryset = super().get_queryset().order_by('date_joined')
+        queryset = super().get_queryset().filter(is_staff=False).order_by('date_joined')
         return queryset
 
 # Actualizar Cuentas
@@ -459,7 +459,7 @@ class UserProfileListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        queryset = super().get_queryset().order_by('user__email')
+        queryset = super().get_queryset().filter(user__is_staff=False).order_by('user__email')
         return queryset
 
 
