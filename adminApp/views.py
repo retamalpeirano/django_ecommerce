@@ -220,6 +220,11 @@ class OrderListView(ListView):
 
         return queryset
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['status_choices'] = Order.STATUS_CHOICES  # Pasar los estados disponibles al contexto
+        return context
+
     def post(self, request, *args, **kwargs):
         order_id = request.POST.get('order_id')
         new_status = request.POST.get('status')
