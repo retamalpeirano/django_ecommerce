@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import export_products_csv
 
 app_name = 'adminApp'
 
@@ -19,6 +20,7 @@ urlpatterns = [
     path('products/create/', views.ProductCreateView.as_view(), name='product_create'),
     path('products/<int:pk>/update/', views.ProductUpdateView.as_view(), name='product_update'),
     path('products/<int:pk>/delete/', views.ProductDeleteView.as_view(), name='product_delete'),
+    path('products/export/', export_products_csv, name='export_products_csv'),
 
     # Reviews
     path('reviews/', views.ReviewRatingListView.as_view(), name='reviewrating_list'),
