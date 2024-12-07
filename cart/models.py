@@ -1,8 +1,6 @@
 from django.db import models, transaction
 from accounts.models import Account
 from store.models import Product
-#from inventory.models import Inventory # NO ESTA USANDOSE ACTUALMENTE
-#from django.utils import timezone # NO ESTA USANDOSE ACTUALMENTE
 from django.contrib.sessions.models import Session
 
 
@@ -43,6 +41,7 @@ class CartItem(models.Model):
 class CartError(Exception):
     """Excepción base para errores relacionados con el carrito."""
     pass
+
 
 class StockError(CartError):
     """Excepción para errores de inventario."""
