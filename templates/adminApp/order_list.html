@@ -33,7 +33,7 @@
         {% for order in orders %}
         <tr>
             <td>{{ order.id }}</td>
-            <td>{{ order.user.email if order.user else "Anónimo" }}</td>
+            <td>{{ order.user.email|default_if_none:"Anónimo" }}</td>
             <td>
                 <form method="post" action="">
                     {% csrf_token %}

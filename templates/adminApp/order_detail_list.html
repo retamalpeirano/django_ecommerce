@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1>Detalles de la Orden #{{ order.id }}</h1>
-<p>Usuario: {{ order.user.email if order.user else "Anónimo" }}</p>
+<p>Usuario: {{ order.user.email|default_if_none:"Anónimo" }}</p>
 <p>Estado: {{ order.get_status_display }}</p>
 <p>Precio Total: {{ order.total_price }}</p>
 <p>Fecha de Creación: {{ order.created_at }}</p>
