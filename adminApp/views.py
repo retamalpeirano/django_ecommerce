@@ -161,6 +161,30 @@ class InventoryListView(ListView):
     context_object_name = "inventories"
 
 
+@user_passes_test(admin_required)
+def export_inventory_csv(request):
+    # Consulta de inventarios
+    queryset = Inventory.objects.select_related('product').all()
+
+    # Crear respuesta HTTP con el tipo de contenido CSV
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="inventory.csv"'
+
+    # Crear escritor CSV
+    writer = csv.writer(response)
+    writer.writerow(['ID Producto', 'Nombre del Producto', 'Stock', 'Stock Mínimo'])
+
+    for inventory in queryset:
+        writer.writerow([
+            inventory.product.id,
+            inventory.product.product_name,
+            inventory.stock,
+            inventory.stock_minimum,
+        ])
+
+    return response
+
+
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class InventoryCreateView(CreateView):
     model = Inventory

@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import export_products_csv
+from .views import export_products_csv, export_inventory_csv
 
 app_name = 'adminApp'
 
@@ -30,6 +30,7 @@ urlpatterns = [
     path('inventory/', views.InventoryListView.as_view(), name='inventory_list'),
     path('inventory/create/', views.InventoryCreateView.as_view(), name='inventory_create'),
     path('inventory/<int:pk>/update/', views.InventoryUpdateView.as_view(), name='inventory_update'),
+    path('inventory/export/', export_inventory_csv, name='export_inventory_csv'),
 
     # Ordenes y detalles de orden
     path('orders/', views.OrderListView.as_view(), name='order_list'),

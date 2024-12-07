@@ -2,7 +2,10 @@
 
 {% block content %}
 <h1>Listado de Inventarios</h1>
-<a href="{% url 'adminApp:inventory_create' %}" class="btn btn-primary">Registrar Nuevo Inventario</a>
+<div class="mb-3">
+    <a href="{% url 'adminApp:inventory_create' %}" class="btn btn-primary">Registrar Nuevo Inventario</a>
+    <a href="{% url 'adminApp:export_inventory_csv' %}" class="btn btn-success">Exportar Inventario a CSV</a>
+</div>
 <table class="table">
     <thead>
         <tr>
@@ -19,7 +22,7 @@
             <td>{{ inventory.stock }}</td>
             <td>{{ inventory.stock_minimum }}</td>
             <td>
-                <a href="{% url 'adminApp:inventory_update' inventory.id %}">Editar</a>
+                <a href="{% url 'adminApp:inventory_update' inventory.id %}" class="btn btn-sm btn-warning">Editar</a>
             </td>
         </tr>
         {% endfor %}
