@@ -44,7 +44,7 @@ class CategoryListView(ListView):
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class CategoryCreateView(CreateView):
     model = Category
-    fields = ['category_name', 'description', 'cat_image']
+    fields = ['category_name', 'description']
     template_name = "adminApp/category_form.html"
     success_url = reverse_lazy('adminApp:category_list')
 
@@ -52,7 +52,7 @@ class CategoryCreateView(CreateView):
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class CategoryUpdateView(UpdateView):
     model = Category
-    fields = ['category_name', 'description', 'cat_image']
+    fields = ['category_name', 'description']
     template_name = "adminApp/category_form.html"
     success_url = reverse_lazy('adminApp:category_list')
 
