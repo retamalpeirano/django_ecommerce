@@ -1,6 +1,5 @@
 from django.contrib import admin
 from .models import Cart, CartItem
-from django.contrib.sessions.models import Session
 
 
 @admin.register(Cart)
@@ -30,24 +29,3 @@ class CartItemAdmin(admin.ModelAdmin):
         return obj.subtotal()
     subtotal.short_description = "Subtotal"
 
-## SESSIONS##
-
-@admin.register(Session)
-class SessionAdmin(admin.ModelAdmin):
-    list_display = ('session_key', 'user', 'expire_date')
-    readonly_fields = ('session_key', 'user', 'expire_date')
-    search_fields = ('session_key',)
-
-    def user(self, obj):
-        # Intenta extraer el usuario de los datos de la sesión
-        from django.contrib.sessions.backends.db import SessionStore
-        session_data = SessionStore(session_key=obj.session_key).load()
-        user_id = session_data.get('_auth_user_id')
-        if user_id:
-            from accounts.models import Account
-            try:
-                user = Account.objects.get(id=user_id)
-                return user.email
-            except Account.DoesNotExist:
-                return "Usuario eliminado"
-        return "Usuario no autenticado"
