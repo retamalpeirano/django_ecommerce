@@ -252,7 +252,7 @@ class StockMovementListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().order_by('-movement_date')
         # Filtrar por tipo de movimiento
         movement_type = self.request.GET.get('movement_type')
         if movement_type in dict(StockMovement.MOVEMENT_CHOICES):
