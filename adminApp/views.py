@@ -10,6 +10,10 @@ from store.models import Product, ReviewRating
 from inventory.models import Inventory, StockMovement
 from orders.models import Order, OrderItem
 import csv
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.db.models import Sum, F
+from datetime import datetime
 
 
 # Restricción para usuarios administradores
