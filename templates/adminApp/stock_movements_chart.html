@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Gráfico de Movimientos de Stock por Producto</h1>
+    <canvas id="stockMovementsChart" width="400" height="200"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx = document.getElementById('stockMovementsChart').getContext('2d');
+
+    async function fetchStockMovementsData() {
+        // Ajustar URL para obtener los datos
+        const response = await fetch('/erp/api/stock-movements-data/');
+        const data = await response.json();
+
+        // Preparar los datos para el gráfico
+        const products = [...new Set(data.map(item => item.inventory__product__product_name))];
+        const types = ['entrada', 'salida'];
+
+        const datasets = types.map(type => {
+            return {
+                label: `Movimiento: ${type.charAt(0).toUpperCase() + type.slice(1)}`,
+                data: products.map(product => {
+                    const movement = data.find(
+                        item => item.inventory__product__product_name === product && item.movement_type === type
+                    );
+                    return movement ? movement.total_quantity : 0;
+                }),
+                backgroundColor: type === 'entrada' ? 'rgba(54, 162, 235, 0.2)' : 'rgba(255, 99, 132, 0.2)',
+                borderColor: type === 'entrada' ? 'rgba(54, 162, 235, 1)' : 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            };
+        });
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: products, // Eje X: productos
+                datasets: datasets
+            },
+            options: {
+                scales: {
+                    x: {
+                        stacked: false // No apilado en el eje X
+                    },
+                    y: {
+                        stacked: false, // No apilado en el eje Y
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    fetchStockMovementsData();
+</script>
+
+{% endblock %}

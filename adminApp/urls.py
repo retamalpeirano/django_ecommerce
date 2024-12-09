@@ -51,5 +51,7 @@ urlpatterns = [
     # Gráficos
 
     path('grafics/sales-chart/', views.sales_chart_view, name='sales_chart'),
-    path('grafics/sales-data/', views.sales_data_api, name='sales_data_api'),
+    path('api/sales-data/', views.sales_data_api, name='sales_data_api'),
+    path('grafics/stock-movements-chart/', views.stock_movements_chart_view, name='stock_movements_chart'),
+    path('api/stock-movements-data/', views.stock_movements_data_api, name='stock_movements_data_api'),
 ]

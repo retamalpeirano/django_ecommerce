@@ -1,48 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Chart</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
     <h1>Gráfico de Ventas</h1>
     <canvas id="salesChart" width="400" height="200"></canvas>
+</div>
 
-    <script>
-        const ctx = document.getElementById('salesChart').getContext('2d');
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        async function fetchSalesData() {
-            const response = await fetch('/api/sales-data/');
-            const data = await response.json();
+<script>
+    const ctx = document.getElementById('salesChart').getContext('2d');
 
-            const labels = data.map(item => item.product__product_name);
-            const values = data.map(item => item.total_sales);
+    async function fetchSalesData() {
+        // Ajustar la URL para que coincida con la configuración de tus URLs
+        const response = await fetch('/erp/api/sales-data/');
+        const data = await response.json();
 
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Ventas Totales',
-                        data: values,
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+        const labels = data.map(item => item.product__product_name);
+        const values = data.map(item => parseFloat(item.total_sales));
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Ventas Totales',
+                    data: values,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
                     }
                 }
-            });
-        }
+            }
+        });
+    }
 
-        fetchSalesData();
-    </script>
-</body>
-</html>
+    fetchSalesData();
+</script>
+{% endblock %}

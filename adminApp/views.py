@@ -483,8 +483,10 @@ class UserProfileUpdateView(UpdateView):
     Gráficos
 """
 
+
 def sales_chart_view(request):
     return render(request, 'adminApp/sales_chart.html')
+
 
 def sales_data_api(request):
     # Filtrar las órdenes completadas
@@ -511,3 +513,31 @@ def sales_data_api(request):
     ).order_by('-total_sales')
 
     return JsonResponse(list(sales_data), safe=False)
+
+
+def stock_movements_chart_view(request):
+    return render(request, 'adminApp/stock_movements_chart.html')
+
+def stock_movements_data_api(request):
+
+    # Filtrar por rango de fechas
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    movements = StockMovement.objects.select_related('inventory', 'inventory__product')
+
+    if start_date:
+        movements = movements.filter(movement_date__gte=start_date)
+    if end_date:
+        movements = movements.filter(movement_date__lte=end_date)
+
+    # Agrupar por producto y tipo de movimiento, sumar cantidades
+    stock_data = movements.values(
+        'inventory__product__product_name',  # Nombre del producto
+        'movement_type'  # Tipo de movimiento (entrada/salida)
+    ).annotate(
+        total_quantity=Sum('quantity')
+    ).order_by('inventory__product__product_name', 'movement_type')
+
+    return JsonResponse(list(stock_data), safe=False)
+
