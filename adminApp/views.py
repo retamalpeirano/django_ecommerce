@@ -480,12 +480,6 @@ class UserProfileUpdateView(UpdateView):
     Gráficos
 """
 
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.db.models import Sum, F
-from .models import Order, OrderItem
-from datetime import datetime
-
 def sales_chart_view(request):
     return render(request, 'admin/sales_chart.html')
 
@@ -514,5 +508,3 @@ def sales_data_api(request):
     ).order_by('-total_sales')
 
     return JsonResponse(list(sales_data), safe=False)
-
-
