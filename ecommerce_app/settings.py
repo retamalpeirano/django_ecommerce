@@ -117,7 +117,10 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
 
-    # APPS
+    # DRF
+    'rest_framework',
+
+    # APPS internas
     'category',
     'inventory',
     'store',
