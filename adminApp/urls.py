@@ -50,6 +50,6 @@ urlpatterns = [
 
     # Gráficos
 
-    path('admin/sales-chart/', views.sales_chart_view, name='sales_chart'),
-    path('api/sales-data/', views.sales_data_api, name='sales_data_api'),
+    path('grafics/sales-chart/', views.sales_chart_view, name='sales_chart'),
+    path('grafics/sales-data/', views.sales_data_api, name='sales_data_api'),
 ]

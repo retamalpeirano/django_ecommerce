@@ -484,7 +484,7 @@ class UserProfileUpdateView(UpdateView):
 """
 
 def sales_chart_view(request):
-    return render(request, 'admin/sales_chart.html')
+    return render(request, 'adminApp/sales_chart.html')
 
 def sales_data_api(request):
     # Filtrar las órdenes completadas
