@@ -76,9 +76,13 @@ class CategoryDeleteView(DeleteView):
     success_url = reverse_lazy('adminApp:category_list')
 
 
+
+
+
+#------------------------------------------------------------------------------------------------------------------------------
 """
     PRODUCTOS Y REVIEWS
-"""
+
 
 # Listar Productos
 @method_decorator(user_passes_test(admin_required), name='dispatch')
@@ -140,7 +144,7 @@ class ProductDeleteView(DeleteView):
     template_name = "adminApp/product_confirm_delete.html"
     success_url = reverse_lazy('adminApp:product_list')
 
-
+"""
 # Listar Reviews
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class ReviewRatingListView(ListView):
@@ -159,7 +163,7 @@ class ReviewRatingDeleteView(DeleteView):
 
 """
     INVENTARIO
-"""
+
 
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class InventoryListView(ListView):
@@ -246,7 +250,8 @@ class InventoryDeleteView(DeleteView):
         )
         return super().delete(request, *args, **kwargs)
     
-
+"""
+# ---------------------------------------------------------------------------------------------------------------------------
 """
     MOVIMIENTOS DE INVENTARIO
 """
@@ -541,3 +546,113 @@ def stock_movements_data_api(request):
 
     return JsonResponse(list(stock_data), safe=False)
 
+"""
+    Productos y Stock
+"""
+
+# Vista combinada para listar productos e inventario
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class ProductInventoryListView(ListView):
+    model = Product
+    template_name = "adminApp/product_list.html"
+    context_object_name = "product_inventory"
+
+    def get_queryset(self):
+        return Product.objects.select_related('inventory').all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['export_url'] = reverse_lazy('adminApp:export_product_csv')
+        return context
+
+
+@user_passes_test(admin_required)
+def export_product_csv(request):
+    # Exportar datos combinados de productos e inventarios
+    queryset = Product.objects.select_related('inventory').all()
+
+    # Crear respuesta HTTP con contenido CSV
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="product_inventory.csv"'
+
+    # Crear escritor CSV
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'Nombre', 'Precio', 'Categoría', 'Disponible', 'Stock', 'Stock Mínimo'])
+
+    for product in queryset:
+        inventory = getattr(product, 'inventory', None)
+        writer.writerow([
+            product.id,
+            product.product_name,
+            product.price,
+            product.category.category_name,
+            'Sí' if product.is_available else 'No',
+            inventory.stock if inventory else 'N/A',
+            inventory.stock_minimum if inventory else 'N/A',
+        ])
+
+    return response
+
+
+# Vista combinada para crear productos con inventario
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class ProductInventoryCreateView(CreateView):
+    model = Product
+    fields = ['product_name', 'slug', 'description', 'price', 'images', 'is_available', 'category']
+    template_name = "adminApp/product_form.html"
+    success_url = reverse_lazy('adminApp:product_list')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        # Crear inventario asociado automáticamente
+        Inventory.objects.create(
+            product=self.object,
+            stock=self.request.POST.get('stock', 0),
+            stock_minimum=self.request.POST.get('stock_minimum', 0),
+        )
+        return response
+
+
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class ProductInventoryUpdateView(UpdateView):
+    model = Product
+    fields = ['product_name', 'slug', 'description', 'price', 'images', 'is_available', 'category']
+    template_name = "adminApp/product_form.html"
+    success_url = reverse_lazy('adminApp:product_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['inventory'] = getattr(self.object, 'inventory', None)
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        # Actualizar inventario asociado
+        inventory = self.object.inventory
+        new_stock = int(self.request.POST.get('stock', inventory.stock))
+        stock_minimum = int(self.request.POST.get('stock_minimum', inventory.stock_minimum))
+
+        # Registrar movimiento
+        if new_stock != inventory.stock:
+            movement_type = 'entrada' if new_stock > inventory.stock else 'salida'
+            quantity = abs(new_stock - inventory.stock)
+            StockMovement.register_movement(
+                inventory=inventory,
+                movement_type=movement_type,
+                quantity=quantity
+            )
+
+        # Actualizar inventario con los nuevos valores
+        inventory.stock = new_stock
+        inventory.stock_minimum = stock_minimum
+        inventory.save()
+
+        return response
+
+
+# Vista para eliminar productos (y el inventario asociado automáticamente)
+@method_decorator(user_passes_test(admin_required), name='dispatch')
+class ProductInventoryDeleteView(DeleteView):
+    model = Product
+    template_name = "adminApp/product_confirm_delete.html"
+    success_url = reverse_lazy('adminApp:product_list')

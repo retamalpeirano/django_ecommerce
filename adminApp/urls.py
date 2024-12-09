@@ -1,6 +1,15 @@
 from django.urls import path
 from . import views
-from .views import export_products_csv, export_inventory_csv, export_stock_movements_csv, StockMovementListView
+from .views import (
+    export_stock_movements_csv,
+    StockMovementListView,
+    export_product_csv,
+    ProductInventoryListView,
+    ProductInventoryCreateView,
+    ProductInventoryUpdateView,
+    ProductInventoryDeleteView,
+    
+)
 
 app_name = 'adminApp'
 
@@ -15,22 +24,16 @@ urlpatterns = [
     path('categories/<int:pk>/update/', views.CategoryUpdateView.as_view(), name='category_update'),
     path('categories/<int:pk>/delete/', views.CategoryDeleteView.as_view(), name='category_delete'),
     
-    # Productos
-    path('products/', views.ProductListView.as_view(), name='product_list'),
-    path('products/create/', views.ProductCreateView.as_view(), name='product_create'),
-    path('products/<int:pk>/update/', views.ProductUpdateView.as_view(), name='product_update'),
-    path('products/<int:pk>/delete/', views.ProductDeleteView.as_view(), name='product_delete'),
-    path('products/export/', export_products_csv, name='export_products_csv'),
+    # Productos y Stock
+    path('product-inventory/', ProductInventoryListView.as_view(), name='product_list'),
+    path('product-inventory/create/', ProductInventoryCreateView.as_view(), name='product_create'),
+    path('product-inventory/update/<int:pk>/', ProductInventoryUpdateView.as_view(), name='product_update'),
+    path('product-inventory/delete/<int:pk>/', ProductInventoryDeleteView.as_view(), name='product_delete'),
+    path('product-inventory/export/', export_product_csv, name='export_product_csv'),
 
     # Reviews
     path('reviews/', views.ReviewRatingListView.as_view(), name='reviewrating_list'),
     path('reviews/<int:pk>/delete/', views.ReviewRatingDeleteView.as_view(), name='reviewrating_delete'),
-    
-    # Inventario
-    path('inventory/', views.InventoryListView.as_view(), name='inventory_list'),
-    path('inventory/create/', views.InventoryCreateView.as_view(), name='inventory_create'),
-    path('inventory/<int:pk>/update/', views.InventoryUpdateView.as_view(), name='inventory_update'),
-    path('inventory/export/', export_inventory_csv, name='export_inventory_csv'),
 
     # Movimientos de stock
     path('stock_movements/', StockMovementListView.as_view(), name='stock_movement_list'),
@@ -49,9 +52,10 @@ urlpatterns = [
     path('userprofiles/<int:pk>/update/', views.UserProfileUpdateView.as_view(), name='userprofile_update'),
 
     # Gráficos
-
     path('grafics/sales-chart/', views.sales_chart_view, name='sales_chart'),
-    path('api/sales-data/', views.sales_data_api, name='sales_data_api'),
     path('grafics/stock-movements-chart/', views.stock_movements_chart_view, name='stock_movements_chart'),
+
+    # Api
+    path('api/sales-data/', views.sales_data_api, name='sales_data_api'),
     path('api/stock-movements-data/', views.stock_movements_data_api, name='stock_movements_data_api'),
 ]
