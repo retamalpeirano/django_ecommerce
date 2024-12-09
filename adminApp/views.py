@@ -1,19 +1,22 @@
-from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView
+# Importaciones estándar de Python
+import csv
+from datetime import datetime
+
+# Importaciones de Django
 from django.contrib.auth.decorators import user_passes_test
-from django.utils.decorators import method_decorator
-from django.shortcuts import redirect
-from django.http import HttpResponse
+from django.db.models import Sum, F
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.generic import CreateView, DeleteView, ListView, TemplateView, UpdateView
+
+# Importaciones locales (de tu proyecto)
 from accounts.models import Account, UserProfile
 from category.models import Category
-from store.models import Product, ReviewRating
 from inventory.models import Inventory, StockMovement
 from orders.models import Order, OrderItem
-import csv
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.db.models import Sum, F
-from datetime import datetime
+from store.models import Product, ReviewRating
 
 
 # Restricción para usuarios administradores
