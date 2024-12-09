@@ -47,4 +47,9 @@ urlpatterns = [
     path('accounts/<int:pk>/update/', views.AccountUpdateView.as_view(), name='account_update'),
     path('userprofiles/', views.UserProfileListView.as_view(), name='userprofile_list'),
     path('userprofiles/<int:pk>/update/', views.UserProfileUpdateView.as_view(), name='userprofile_update'),
+
+    # Gráficos
+
+    path('admin/sales-chart/', views.sales_chart_view, name='sales_chart'),
+    path('api/sales-data/', views.sales_data_api, name='sales_data_api'),
 ]

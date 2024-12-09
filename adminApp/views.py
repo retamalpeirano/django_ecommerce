@@ -470,3 +470,45 @@ class UserProfileUpdateView(UpdateView):
     fields = ['rut', 'profile_picture', 'address', 'phone_number', 'additional_data']
     template_name = "adminApp/userprofile_form.html"
     success_url = reverse_lazy('adminApp:userprofile_list')
+
+
+"""
+    Gráficos
+"""
+
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.db.models import Sum, F
+from .models import Order, OrderItem
+from datetime import datetime
+
+def sales_chart_view(request):
+    return render(request, 'admin/sales_chart.html')
+
+def sales_data_api(request):
+    # Filtrar las órdenes completadas
+    completed_orders = Order.objects.filter(status='completed')
+
+    # Filtros dinámicos
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    product_ids = request.GET.getlist('product_ids')
+
+    if start_date:
+        completed_orders = completed_orders.filter(created_at__gte=start_date)
+    if end_date:
+        completed_orders = completed_orders.filter(created_at__lte=end_date)
+
+    # Filtrar por productos si se especifican
+    order_items = OrderItem.objects.filter(order__in=completed_orders)
+    if product_ids:
+        order_items = order_items.filter(product_id__in=product_ids)
+
+    # Agrupar y sumar los subtotales por producto
+    sales_data = order_items.values('product__product_name').annotate(
+        total_sales=Sum(F('quantity') * F('price'))
+    ).order_by('-total_sales')
+
+    return JsonResponse(list(sales_data), safe=False)
+
+
