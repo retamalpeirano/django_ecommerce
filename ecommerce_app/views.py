@@ -17,8 +17,3 @@ def home(request):
     }
 
     return render(request, 'home.html', context)
-
-
-def dashboard(request):
-    # Puedes agregar lógica personalizada aquí
-    return render(request, 'accounts/dashboard.html')  # Asegúrate de que la plantilla `dashboard.html` exista

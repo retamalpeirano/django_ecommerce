@@ -1,8 +1,8 @@
-# Importaciones estándar de Python
+# Python
 import csv
 from datetime import datetime
 
-# Importaciones de Django
+# Django
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Sum, F
 from django.http import HttpResponse, JsonResponse
@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, DeleteView, ListView, TemplateView, UpdateView
 
-# Importaciones locales (de tu proyecto)
+# Local
 from accounts.models import Account, UserProfile
 from category.models import Category
 from inventory.models import Inventory, StockMovement

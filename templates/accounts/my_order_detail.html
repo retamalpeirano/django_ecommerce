@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-conten padding-y bg">
+    <div class="container">
+        <div class="row">
+            <main class="col-md-12">
+                <article class="card">
+                    <header class="card-header">
+                        <strong>Detalles de la Orden #{{ order.id }}</strong>
+                    </header>
+                    <div class="card-body">
+                        <p><strong>Estado:</strong> {{ order.get_status_display }}</p>
+                        <p><strong>Total de la Orden:</strong> ${{ order.total_price|floatformat:0 }} CLP</p>
+                        <p><strong>Fecha de Creación:</strong> {{ order.created_at|date:"Y-m-d H:i" }}</p>
+
+                        <h5>Productos:</h5>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in items %}
+                                <tr>
+                                    <td>{{ item.product.product_name }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>${{ item.price|floatformat:0 }} CLP</td>
+                                    <td>${{ item.subtotal|floatformat:0 }} CLP</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <a href="{% url 'my_orders' %}" class="btn btn-secondary">Volver a Mis Órdenes</a>
+                    </div>
+                </article>
+            </main>
+        </div>
+    </div>
+</section>
+{% endblock %}

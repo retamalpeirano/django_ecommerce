@@ -1,8 +1,10 @@
+# Django
 from django.db import models, transaction
-from accounts.models import Account
-from store.models import Product
 from django.contrib.sessions.models import Session
 
+# Local
+from accounts.models import Account
+from store.models import Product
 
 # Modelo para el carrito
 class Cart(models.Model):

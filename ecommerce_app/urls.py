@@ -5,16 +5,15 @@ from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('django/', admin.site.urls),
     path('', views.home, name='home'),
     path('accounts/', include('accounts.urls')),
     path('store/', include('store.urls')),
-    path('dashboard/', views.dashboard, name='dashboard'),
     path('orders/', include('orders.urls')),
     path('cart/', include('cart.urls')),
-    path('erp/', include('adminApp.urls')),
+    path('admin/', include('adminApp.urls')),
 ]
 
-# Manejo de archivos estáticos y medios en modo DEBUG
+# DEBUG
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

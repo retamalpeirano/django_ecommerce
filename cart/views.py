@@ -1,9 +1,12 @@
+# Django
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_http_methods
+from django.contrib import messages
+
+# Local
 from .models import get_or_create_cart, add_to_cart, update_cart_item, remove_from_cart, CartItem, CartError, StockError
 from store.models import Product
-from django.contrib import messages
 
 
 @require_http_methods(["GET"])

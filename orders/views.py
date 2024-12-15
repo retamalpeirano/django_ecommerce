@@ -1,8 +1,13 @@
-from django.http import JsonResponse
+# Python  
+from decimal import Decimal
+
+# Terceros
+from django.db import transaction
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_http_methods
-from django.http import JsonResponse
-from django.db import transaction
+from django.contrib.auth.decorators import login_required
+
+# Local
 from accounts.models import Account, UserProfile
 from cart.models import get_or_create_cart
 from .models import Order
@@ -95,53 +100,37 @@ def checkout(request):
     return redirect('order_success', order_id=order.id)
 
 
-@require_http_methods(["GET"])
+@login_required
 def list_orders(request):
-    """Lista las órdenes del usuario autenticado."""
-    if not request.user.is_authenticated:
-        return JsonResponse({"error": "Debe estar autenticado para ver sus órdenes."}, status=403)
-
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
-    data = [
-        {
-            "id": order.id,
-            "total_price": order.total_price,
-            "status": order.get_status_display(),
-            "created_at": order.created_at,
-        }
-        for order in orders
-    ]
-    return JsonResponse({"orders": data})
+    return render(request, 'accounts/my_orders.html', {'orders': orders})
 
 
-@require_http_methods(["GET"])
+@login_required
 def order_detail(request, order_id):
-    """Devuelve los detalles de una orden específica."""
     order = get_object_or_404(Order, id=order_id, user=request.user)
-
-    items = [
-        {
-            "product_name": item.product.product_name,
-            "quantity": item.quantity,
-            "price": item.price,
-            "subtotal": item.subtotal(),
-        }
-        for item in order.items.all()
-    ]
-    return JsonResponse({
-        "order_id": order.id,
-        "total_price": order.total_price,
-        "status": order.get_status_display(),
-        "items": items,
+    return render(request, 'accounts/my_order_detail.html', {
+        'order': order,
+        'items': order.items.all()
     })
 
 
 @require_http_methods(["GET"])
 def order_success(request, order_id):
-    """
-    Renderiza una página de éxito después de la creación de una orden.
-    """
+    order = get_object_or_404(Order, id=order_id)
+    ordered_items = order.items.all()
+
+    subtotal = sum(item.subtotal() for item in ordered_items)
+    iva = subtotal * Decimal('0.19')
+    total = subtotal + iva
+
     context = {
-        'order_id': order_id
+        'order': order,
+        'ordered_products': ordered_items,
+        'subtotal': subtotal,
+        'order_tax': iva,
+        'order_total': total
     }
+
     return render(request, 'orders/order_complete.html', context)
+
