@@ -9,7 +9,6 @@ from inventory.models import Inventory
 from django.db.models import Q
 from .forms import ReviewForm
 from django.contrib import messages
-from cart.models import get_or_create_cart, add_to_cart, CartError, StockError
 
 
 def store(request, category_slug=None):
