@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="section-conten padding-y bg">
+    <div class="container">
+        <div class="row">
+            <main class="col-md-12">
+                <article class="card">
+                    <header class="card-header">
+                        <strong>Edita tu perfil de usuario</strong>
+                    </header>
+                    <div class="card-body">
+                        <div class="text-right">
+                            {% if userprofile.profile_picture %}
+                            <img src="{{ userprofile.profile_picture.url }}" alt="Imagen de Perfil" width="100" style="border-radius:50px;">
+                            {% endif %}
+                        </div>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ user_form.as_p }}
+                            {{ profile_form.as_p }}
+                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                        </form>
+                        <form action="{% url 'delete_account' %}" method="post" style="margin-top: 20px;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Eliminar Cuenta</button>
+                        </form>
+                    </div>
+                </article>
+            </main>
+        </div>
+    </div>
+</section>
+{% endblock %}

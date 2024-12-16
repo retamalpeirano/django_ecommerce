@@ -1,24 +1,62 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Dashboard Administrativo</h1>
-<div class="div">
-    <ul>
-        <li><a href="{% url 'adminApp:category_list' %}">Gestionar Categorías</a></li>
-        <li><a href="{% url 'adminApp:product_list' %}">Gestionar Productos</a></li>
-        <li><a href="{% url 'adminApp:reviewrating_list' %}">Gestionar Reviews de Productos</a></li>
-        <li><a href="{% url 'adminApp:stock_movement_list' %}">Gestionar Movimientos de Stock</a></li>
-        <li><a href="{% url 'adminApp:account_list' %}">Gestionar Cuentas de Usuario</a></li>
-        <li><a href="{% url 'adminApp:userprofile_list' %}">Gestionar Perfiles de Usuario</a></li>
-        <li><a href="{% url 'adminApp:order_list' %}">Gestionar Ordenes de Venta</a></li>
-    </ul>
-    <div>
-        <p>Total Categorías: {{ category_count }}</p>
+<h1 class="text-center mb-4">Dashboard Administrativo</h1>
+
+<div class="container">
+    <div class="row gx-3 gy-3">
+        <!-- Botones con margen inferior -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'adminApp:category_list' %}" class="btn btn-primary w-100 p-3">
+                Gestionar Categorías
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'adminApp:product_list' %}" class="btn btn-primary w-100 p-3">
+                Gestionar Productos
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'adminApp:reviewrating_list' %}" class="btn btn-primary w-100 p-3">
+                Gestionar Reviews de Productos
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'adminApp:stock_movement_list' %}" class="btn btn-primary w-100 p-3">
+                Gestionar Movimientos de Stock
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'adminApp:account_list' %}" class="btn btn-primary w-100 p-3">
+                Gestionar Cuentas de Usuario
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'adminApp:userprofile_list' %}" class="btn btn-primary w-100 p-3">
+                Gestionar Perfiles de Usuario
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'adminApp:order_list' %}" class="btn btn-primary w-100 p-3">
+                Gestionar Ordenes de Venta
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'adminApp:sales_chart' %}" class="btn btn-primary w-100 p-3">
+                Graficar Ventas
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'adminApp:stock_movements_chart' %}" class="btn btn-primary w-100 p-3">
+                Graficar Movimientos de Stock
+            </a>
+        </div>
     </div>
-</div>
+
+<!-- Alertas de bajo stock -->
 {% if low_stock_alerts %}
-<div class="alert alert-warning" role="alert">
-    <h4>Alertas de bajo stock:</h4>
+<div class="alert alert-warning mt-4" role="alert">
+    <h4 class="alert-heading">Alertas de bajo stock:</h4>
     <ul>
         {% for alert in low_stock_alerts %}
         <li>{{ alert }}</li>
@@ -26,4 +64,5 @@
     </ul>
 </div>
 {% endif %}
+
 {% endblock %}
