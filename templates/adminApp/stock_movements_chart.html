@@ -12,8 +12,7 @@
     const ctx = document.getElementById('stockMovementsChart').getContext('2d');
 
     async function fetchStockMovementsData() {
-        // Ajustar URL para obtener los datos
-        const response = await fetch('/erp/api/stock-movements-data/');
+        const response = await fetch('/admin/api/stock-movements-data/');
         const data = await response.json();
 
         // Preparar los datos para el gráfico
@@ -57,5 +56,9 @@
 
     fetchStockMovementsData();
 </script>
+
+<div class="row" style="padding-left: 50%; padding-bottom: 5%; padding-top: 2%;">
+    <a href="{% url 'adminApp:dashboard' %}" class="btn btn-secondary">Volver</a>
+</div>
 
 {% endblock %}

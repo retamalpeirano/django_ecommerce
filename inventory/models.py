@@ -19,7 +19,7 @@ class Inventory(models.Model):
             return f"Advertencia: El producto '{self.product.product_name}' está por agotarse. \nStock actual: {self.stock}"
 
     def __str__(self):
-        return f"Inventario de {self.product.product_name}"
+        return f"Stock de {self.product.product_name}"
 
 
 class StockMovement(models.Model):

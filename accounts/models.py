@@ -41,7 +41,6 @@ class Account(AbstractBaseUser, PermissionsMixin):
 class UserProfile(models.Model):
     user = models.OneToOneField(Account, on_delete=models.CASCADE, related_name="profile")
     rut = models.CharField(_("RUT o identificación nacional"), max_length=20, blank=True)
-    profile_picture = models.ImageField(_("foto de perfil"), upload_to="user_profiles/", blank=True)
     address = models.JSONField(_("dirección"), default=dict, blank=True)
     phone_number = models.CharField(_("número de teléfono"), max_length=15, blank=True)
     additional_data = models.JSONField(_("datos adicionales"), default=dict, blank=True)

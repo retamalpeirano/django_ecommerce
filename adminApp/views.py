@@ -433,7 +433,7 @@ class UserProfileListView(ListView):
 @method_decorator(user_passes_test(admin_required), name='dispatch')
 class UserProfileUpdateView(UpdateView):
     model = UserProfile
-    fields = ['rut', 'profile_picture', 'address', 'phone_number', 'additional_data']
+    fields = ['rut', 'address', 'phone_number', 'additional_data']
     template_name = "adminApp/userprofile_form.html"
     success_url = reverse_lazy('adminApp:userprofile_list')
 

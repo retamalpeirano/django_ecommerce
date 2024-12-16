@@ -12,8 +12,7 @@
     const ctx = document.getElementById('salesChart').getContext('2d');
 
     async function fetchSalesData() {
-        // Ajustar la URL para que coincida con la configuración de tus URLs
-        const response = await fetch('/erp/api/sales-data/');
+        const response = await fetch('/admin/api/sales-data/');
         const data = await response.json();
 
         const labels = data.map(item => item.product__product_name);
@@ -43,4 +42,8 @@
 
     fetchSalesData();
 </script>
+
+<div class="row" style="padding-left: 50%; padding-bottom: 5%; padding-top: 2%;">
+    <a href="{% url 'adminApp:dashboard' %}" class="btn btn-secondary">Volver</a>
+</div>
 {% endblock %}

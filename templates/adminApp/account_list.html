@@ -1,33 +1,41 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Listado de Cuentas</h1>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Email</th>
-            <th>Nombre de Usuario</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Activo</th>
-            <th>Es Staff</th>
-            <th>Opciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for account in accounts %}
-        <tr>
-            <td>{{ account.email }}</td>
-            <td>{{ account.username }}</td>
-            <td>{{ account.first_name }}</td>
-            <td>{{ account.last_name }}</td>
-            <td>{{ account.is_active|yesno:"Sí,No" }}</td>
-            <td>{{ account.is_staff|yesno:"Sí,No" }}</td>
-            <td>
-                <a href="{% url 'adminApp:account_update' account.id %}" class="btn btn-primary btn-sm">Editar</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="container">
+    <h1>Listado de Cuentas</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Nombre de Usuario</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Activo</th>
+                <th>Es Staff</th>
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for account in accounts %}
+            <tr>
+                <td>{{ account.email }}</td>
+                <td>{{ account.username }}</td>
+                <td>{{ account.first_name }}</td>
+                <td>{{ account.last_name }}</td>
+                <td>{{ account.is_active|yesno:"Sí,No" }}</td>
+                <td>{{ account.is_staff|yesno:"Sí,No" }}</td>
+                <td>
+                    <a href="{% url 'adminApp:account_update' account.id %}" class="btn btn-primary btn-sm">Editar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="row" style="padding-left: 5%; padding-bottom: 5%; padding-top: 2%;">
+        <a href="{% url 'adminApp:dashboard' %}" class="btn btn-secondary">Volver</a>
+    </div>
+
+</div>
+
 {% endblock %}

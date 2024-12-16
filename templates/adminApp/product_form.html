@@ -1,19 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>{% if object %}Editar Producto e Inventario{% else %}Crear Producto e Inventario{% endif %}</h1>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <div>
-        <label for="stock">Stock:</label>
-        <input type="number" id="stock" name="stock" value="{% if inventory %}{{ inventory.stock }}{% else %}0{% endif %}" class="form-control">
-    </div>
-    <div>
-        <label for="stock_minimum">Stock Mínimo:</label>
-        <input type="number" id="stock_minimum" name="stock_minimum" value="{% if inventory %}{{ inventory.stock_minimum }}{% else %}0{% endif %}" class="form-control">
-    </div>    
-    <button type="submit" class="btn btn-success">{% if object %}Actualizar{% else %}Crear{% endif %}</button>
-    <a href="{% url 'adminApp:product_list' %}" class="btn btn-secondary">Cancelar</a>
-</form>
+<div class="container">
+    <h1>{% if object %}Editar Producto{% else %}Crear Producto{% endif %}</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div>
+            <label for="stock">Stock:</label>
+            <input type="number" id="stock" name="stock" value="{% if inventory %}{{ inventory.stock }}{% else %}0{% endif %}" class="form-control">
+        </div>
+        <div>
+            <label for="stock_minimum">Stock Mínimo:</label>
+            <input type="number" id="stock_minimum" name="stock_minimum" value="{% if inventory %}{{ inventory.stock_minimum }}{% else %}0{% endif %}" class="form-control">
+        </div>    
+        <button type="submit" class="btn btn-success">{% if object %}Actualizar{% else %}Crear{% endif %}</button>
+        <a href="{% url 'adminApp:product_list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
 {% endblock %}

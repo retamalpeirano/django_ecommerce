@@ -1,50 +1,58 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Gestión de Productos e Inventarios</h1>
-<div class="mb-3">
-    <a href="{% url 'adminApp:product_create' %}" class="btn btn-primary">Crear Producto e Inventario</a>
-    <a href="{% url 'adminApp:export_product_csv' %}" class="btn btn-success">Exportar a CSV</a>
+<div class="container">
+    <h1>Gestión de Productos</h1>
+    <div class="mb-3">
+        <a href="{% url 'adminApp:product_create' %}" class="btn btn-primary">Crear Producto</a>
+        <a href="{% url 'adminApp:export_product_csv' %}" class="btn btn-success">Exportar a CSV</a>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre del Producto</th>
+                <th>Precio</th>
+                <th>Categoría</th>
+                <th>Disponible</th>
+                <th>Stock</th>
+                <th>Stock Mínimo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in product_inventory %}
+            <tr>
+                <td>{{ product.product_name }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.category.category_name }}</td>
+                <td>{{ product.is_available|yesno:"Sí,No" }}</td>
+                <td>
+                    {% if product.inventory %}
+                        {{ product.inventory.stock }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>
+                    {% if product.inventory %}
+                        {{ product.inventory.stock_minimum }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'adminApp:product_update' product.id %}" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="{% url 'adminApp:product_delete' product.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="row" style="padding-left: 5%; padding-bottom: 5%; padding-top: 2%;">
+        <a href="{% url 'adminApp:dashboard' %}" class="btn btn-secondary">Volver</a>
+    </div>
+
 </div>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Nombre del Producto</th>
-            <th>Precio</th>
-            <th>Categoría</th>
-            <th>Disponible</th>
-            <th>Stock</th>
-            <th>Stock Mínimo</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for product in product_inventory %}
-        <tr>
-            <td>{{ product.product_name }}</td>
-            <td>{{ product.price }}</td>
-            <td>{{ product.category.category_name }}</td>
-            <td>{{ product.is_available|yesno:"Sí,No" }}</td>
-            <td>
-                {% if product.inventory %}
-                    {{ product.inventory.stock }}
-                {% else %}
-                    N/A
-                {% endif %}
-            </td>
-            <td>
-                {% if product.inventory %}
-                    {{ product.inventory.stock_minimum }}
-                {% else %}
-                    N/A
-                {% endif %}
-            </td>
-            <td>
-                <a href="{% url 'adminApp:product_update' product.id %}" class="btn btn-sm btn-warning">Editar</a>
-                <a href="{% url 'adminApp:product_delete' product.id %}" class="btn btn-sm btn-danger">Eliminar</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+
 {% endblock %}

@@ -39,7 +39,6 @@ class MySocialAccountAdapter(DefaultSocialAccountAdapter):
         # Create a profile for additional data storage.
         UserProfile.objects.create(
             user=user,
-            profile_picture=sociallogin.account.extra_data.get("picture"),
             additional_data=sociallogin.account.extra_data,  # Almacenar aquí los datos adicionales
         )
 

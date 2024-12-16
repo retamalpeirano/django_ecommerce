@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-center mb-4">Dashboard Administrativo</h1>
 
 <div class="container">
+    <div class="row">
+        <h1 class="text-center mb-4" style="padding-left: 28%;">Dashboard Administrativo</h1>
+    </div>
+    
     <div class="row gx-3 gy-3">
         <!-- Botones con margen inferior -->
         <div class="col-md-3 mb-3">
@@ -64,5 +67,12 @@
     </ul>
 </div>
 {% endif %}
+
+<!-- Botón: Cerrar Sesión -->
+<div class="row">
+    <a class="btn btn-light btn-block" href="{% url 'account_logout' %}" style="margin-inline: 20%; margin-block-start: 2%; margin-block-end: 2%;">
+        <i class="fa fa-power-off"></i> <span class="text">Cerrar sesión</span>
+    </a>
+</div> <!-- row.3// -->
 
 {% endblock %}

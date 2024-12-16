@@ -10,11 +10,6 @@
                         <strong>Edita tu perfil de usuario</strong>
                     </header>
                     <div class="card-body">
-                        <div class="text-right">
-                            {% if userprofile.profile_picture %}
-                            <img src="{{ userprofile.profile_picture.url }}" alt="Imagen de Perfil" width="100" style="border-radius:50px;">
-                            {% endif %}
-                        </div>
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ user_form.as_p }}
@@ -26,6 +21,11 @@
                             <button type="submit" class="btn btn-danger">Eliminar Cuenta</button>
                         </form>
                     </div>
+
+                    <div class="row" style="margin-left: 50%; margin-bottom: 5%;">
+                        <a href="{% url 'account_dashboard' %}" class="btn btn-secondary">Volver</a>
+                    </div>
+
                 </article>
             </main>
         </div>
