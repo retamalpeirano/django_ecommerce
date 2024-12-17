@@ -98,15 +98,13 @@ def update_cart_item(cart_item, quantity):
         remove_from_cart(cart_item)
     else:
         inventory = cart_item.product.inventory
-        with transaction.atomic():
-            if inventory and inventory.stock + cart_item.quantity < quantity:
-                raise StockError("Stock insuficiente para actualizar la cantidad.")
-            
-            # Revertir stock anterior y descontar nueva cantidad
-            inventory.stock += cart_item.quantity  # Revertir cantidad actual
-            inventory.stock -= quantity  # Aplicar nueva cantidad
-            inventory.save()
 
+        # Validar que hay suficiente stock disponible
+        if inventory and inventory.stock < quantity:
+            raise StockError("No hay suficiente stock para actualizar la cantidad.")
+
+        with transaction.atomic():
+            # Actualizar cantidad sin modificar el stock
             cart_item.quantity = quantity
             cart_item.save()
 

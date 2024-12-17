@@ -89,4 +89,17 @@
         </div>
     </div>
 </section>
+
 {% endblock %}
+
+<!-- Script de protección contra doble envío -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.querySelector("form");
+    form.addEventListener("submit", function() {
+        const submitButton = form.querySelector("[type=submit]");
+        submitButton.disabled = true;
+        submitButton.textContent = "Procesando...";
+    });
+});
+</script>
