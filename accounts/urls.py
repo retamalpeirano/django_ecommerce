@@ -9,7 +9,7 @@ from . import views
 
 urlpatterns = [
 
-    path('login/', RedirectView.as_view(url=reverse_lazy('account_google_login')), name='account_login'),
+    path('login/', RedirectView.as_view(url=reverse_lazy('google_login')), name='account_login'),
 
     path('', include('allauth.urls')),
     path('dashboard/', views.dashboard, name='account_dashboard'),
