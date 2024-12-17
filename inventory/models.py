@@ -38,21 +38,19 @@ class StockMovement(models.Model):
     
     @classmethod
     def register_movement(cls, inventory, movement_type, quantity):
-
+        """
+        Registra un movimiento de stock. No modifica directamente el inventario,
+        solo deja constancia del movimiento.
+        """
         if movement_type == 'salida' and quantity > inventory.stock:
             raise ValueError("No hay suficiente stock disponible para este movimiento.")
-
+    
         movement = cls.objects.create(
             inventory=inventory,
             movement_type=movement_type,
             quantity=quantity,
             movement_date=timezone.now()
         )
-
-        if movement_type == 'entrada':
-            inventory.stock += quantity
-        elif movement_type == 'salida':
-            inventory.stock -= quantity
-
-        inventory.save()
+    
         return movement
+    
