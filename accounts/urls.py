@@ -1,8 +1,16 @@
-from django.urls import path, include
-from . import views
+# Django
+from django.urls import path, include, reverse_lazy
+from django.views.generic.base import RedirectView
 from django.contrib.auth.views import PasswordResetView, PasswordChangeView
 
+# Local
+from . import views
+
+
 urlpatterns = [
+
+    path('login/', RedirectView.as_view(url=reverse_lazy('account_google_login')), name='account_login'),
+
     path('', include('allauth.urls')),
     path('dashboard/', views.dashboard, name='account_dashboard'),
     path('account/', views.account_view, name='account_view'),

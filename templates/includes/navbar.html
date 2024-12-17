@@ -76,7 +76,7 @@
             <div class="widget-header">
               <small class="title text-muted">Bienvenido a GrowFood!</small>
               <div>
-                <a href="{% url 'account_login' %}">Iniciar Sesión</a> <span class="dark-transp"> | </span>
+                <a href="{% url 'account_google_login' %}" onclick="window.open(this.href, 'Google Login', 'width=600,height=600'); return false;">Iniciar Sesión</a> | </span>
                 <a href="{% url 'account_signup' %}">Registrarse</a>
               </div>
             </div>
